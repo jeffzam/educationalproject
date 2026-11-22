@@ -10,6 +10,7 @@ const history8 = 'https://curriculum.gov.mt/wp-content/uploads/2024/04/History_Y
 const geography = 'https://curriculum.gov.mt/wp-content/uploads/2024/04/Geography_syllabus_Year-8-general-2021-2022.pdf';
 const science7 = 'https://curriculum.gov.mt/wp-content/uploads/2025/05/syllabus_science_yr07_may_2025.pdf';
 const geography9 = 'https://curriculum.gov.mt/wp-content/uploads/2025/10/syllabus_geography_yr09_general_2025-2026.pdf';
+const geography10 = 'https://curriculum.gov.mt/wp-content/uploads/2025/10/syllabus_geography_yr10_general_2025-2026.pdf';
 const social6 = 'https://curriculum.gov.mt/wp-content/uploads/2024/04/Social_Studies-yr06-LOs-2023.pdf';
 const verified = 'Verified in linked official document';
 const pending = 'Proposed activity objective · official mapping pending';
@@ -26,6 +27,8 @@ export const outcomes = [
   { id: 'knights', stage: 'Secondary', year: 8, subject: 'History General', strand: 'Chronology and sequence', code: 'HIS 8.5 · objective 3, item 2 (A7.5, A7.8)', summary: 'Sequence key events between the loss of Rhodes in 1523 as stated in the syllabus and the Knights’ formal entry into Mdina in 1530. Consult the source for its periodisation.', source: history8 + '#page=26', document: 'Year 8 History Learning and Assessment Programme', version: '2020 · linked by the Department', status: verified },
   { id: 'flood', stage: 'Secondary', year: 8, subject: 'Geography General', strand: 'Natural hazards', code: '8.3', summary: 'Research a case study to describe the characteristics and effects of a natural disaster, such as flooding.', source: geography + '#page=13', document: 'Year 8 Geography General Syllabus', version: '2021–2022 · linked by the Department', status: verified },
   { id: 'water-conservation', stage: 'Secondary', year: 9, subject: 'Geography General', strand: 'Water resources', code: '3.2h', summary: 'Explain why conserving water matters in Malta’s semi-arid climate.', source: geography9 + '#page=14', document: 'Year 9 Geography General Syllabus', version: '2025–2026 · linked by the Department', status: verified, enquiry: 'Read the Malta water context. Keep rainfall and demand fixed, then compare how conservation and a supply intervention affect a dry month. Use the results to explain one reason to conserve water in Malta.', criterion: 'Use two model outcomes and one detail from the Malta context to explain the value of water conservation.' },
+  { id: 'energy-sustainability', stage: 'Secondary', year: 10, subject: 'Geography General', strand: 'Energy resources', code: '4.3b', summary: 'Discuss how sustainable or alternative energy sources are used in Malta.', source: geography10 + '#page=14', document: 'Year 10 Geography General Syllabus', version: '2025–2026 · linked by the Department', status: verified, enquiry: 'Read how solar generation supports Malta’s power supply. Compare the fictional town’s baseline with a solar or storage intervention. Explain one advantage and one constraint using recorded results.', criterion: 'Relate the change in grid requirement and the cost of the intervention to a source about Malta’s use of solar energy.' },
+  { id: 'urban-impact', stage: 'Secondary', year: 7, subject: 'Science', strand: 'Our Natural Environment', code: 'SCI LOF 7.2 · item 18', summary: 'Discuss positive and negative human impacts on the environment.', source: science7 + '#page=17', document: 'Year 7 Science Learning and Assessment Programme', version: 'May 2025', status: verified, enquiry: 'Compare two town designs with different building, road or greening choices. Use the model and the ERA source to discuss one positive and one negative environmental impact.', criterion: 'Use heat, runoff or habitat evidence to explain a benefit and a drawback of human choices.' },
   ...[
     ['water', 'Water resources', 'Compare the effects of water conservation and additional supply.'],
     ['solar', 'Energy resources', 'Evaluate the costs and benefits of meeting demand with solar energy and storage.'],
@@ -44,11 +47,11 @@ export const activities = [
   ['knights','history','Malta Under the Knights','knights','How did the Knights’ move to Malta change the role of harbour settlements?','Use the timeline and harbour source to connect an event with a consequence.'],
   ['flood','future','Coastal Flooding','flood','Save a Maltese Coastal Town','Record a baseline, add protection within €1 million and justify your plan. Pair your model evidence with the real flood case study.'],
   ['water','future','Water Management','water-conservation','Can the town meet a month of water demand after a dry spell?','Compare a supply intervention with conservation or leakage repairs.'],
-  ['solar','future','Sustainable Energy','solar','How much demand can the town meet with solar and storage?','Measure the baseline. Compare more panels against improved efficiency and storage.'],
-  ['urban','future','Sustainable Urban Planning','urban','How can the town reduce heat and runoff while keeping people connected?','Try two designs within budget and explain who benefits from each.']
+  ['solar','future','Sustainable Energy','energy-sustainability','How much demand can the town meet with solar and storage?','Measure the baseline. Compare more panels against improved efficiency and storage.'],
+  ['urban','future','Sustainable Urban Planning','urban-impact','How can the town reduce heat and runoff while keeping people connected?','Try two designs within budget and explain who benefits from each.']
 ].map(([id, group, title, outcome, question, task]) => ({ id, group, title, outcome, question, task }));
 
-const alternateOutcomes = { matter:['particle-model'], roman:['heritage'], water:['water'] };
+const alternateOutcomes = { matter:['particle-model'], roman:['heritage'], water:['water'], solar:['solar'], urban:['urban'] };
 export const activityOutcomeIds = activity => [activity.outcome, ...(alternateOutcomes[activity.id] || [])];
 export function resolveOutcome(activity, requested) {
   const selected = activityOutcomeIds(activity).includes(requested) ? requested : activity.outcome;
@@ -106,8 +109,12 @@ export const mdinaStops = [
     compare: 'Which detail comes from an interpretation? What kind of evidence would help you check it?'
   }
 ];
-export const floodCase = ['Real case study: Malta’s September 2003 floods', 'The national assessment records rainfall flooding on 15 September 2003. It lists Qormi, Msida, Birkirkara, Burmarrad, Siġġiewi and Marsa, and reports disruption to traffic and damage to private property. Use the report to compare how rainfall flooding and coastal flooding affect people and infrastructure.', 'https://www.energywateragency.gov.mt/wp-content/uploads/2017/12/Preliminary-Flood-Risk-Assessment-Final-Report.pdf'];
-export const waterCase = ['Real context: Water in Malta', 'Malta has a semi-arid climate and limited natural freshwater. The Energy and Water Agency describes demand management alongside rainwater harvesting, desalination and water reuse. Compare that context with the assumptions and interventions in the fictional town model.', 'https://energywateragency.gov.mt/water/'];
+export const planningCases = {
+  flood:['Real case study: Malta’s September 2003 floods', 'The national assessment records rainfall flooding on 15 September 2003. It lists Qormi, Msida, Birkirkara, Burmarrad, Siġġiewi and Marsa, and reports disruption to traffic and damage to private property. Use the report to compare how rainfall flooding and coastal flooding affect people and infrastructure.', 'https://www.energywateragency.gov.mt/wp-content/uploads/2017/12/Preliminary-Flood-Risk-Assessment-Final-Report.pdf', 'Read the national flood risk assessment'],
+  water:['Real context: Water in Malta', 'Malta has a semi-arid climate and limited natural freshwater. The Energy and Water Agency describes demand management alongside rainwater harvesting, desalination and water reuse. Compare that context with the assumptions and interventions in the fictional town model.', 'https://energywateragency.gov.mt/water/', 'Read the Energy and Water Agency guide'],
+  solar:['Real context: Solar and Malta’s grid', 'The Energy and Water Agency describes local photovoltaic installations as one contributor to electricity supply. It also discusses investment needed to support a stable grid as renewable generation increases.', 'https://energywateragency.gov.mt/security-of-supply/', 'Read the Energy and Water Agency guide'],
+  urban:['Real context: Landscaping in Maltese towns', 'Malta’s Environment and Resources Authority links suitable landscaping to temperature regulation, water management and habitats. Use its guidance to check the benefits your fictional model represents and identify a detail it leaves out.', 'https://era.org.mt/intent-and-objectives-general-guidelines-for-landscaping-in-urban-areas/', 'Read the Environment and Resources Authority guidance']
+};
 export const levels = {
   Support: 'Use two examples and this frame: I changed or inspected __. I noticed __. This suggests __.',
   Core: 'Compare two pieces of evidence and use them to explain your conclusion.',

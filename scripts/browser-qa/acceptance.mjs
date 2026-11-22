@@ -105,6 +105,28 @@ const checks = [
     contains('#review','energywateragency.gov.mt/water');
     element('#assessment').requestSubmit();
     assert(app().activeElement===element('#assessment button'),'Teacher review lost keyboard focus');
+  }],
+  ['Malta 2050 compares selected plans across a reload',async()=>{
+    frame.style.width='390px';
+    await view('future/solar');
+    contains('main','4.3b');
+    click('[data-run]');
+    write('#variables [name="solar"]','10');
+    click('[data-run]');
+    write('#variables [name="solar"]','15');
+    click('[data-run]');
+    write('#plan-comparison [name="baseline"]','1','change');
+    contains('.plan-result','Solar size (MW): 10 → 15');
+    contains('.plan-result','+3250 €k');
+    await reload();
+    contains('.plan-result','Trial 2 and Trial 3');
+    assert(app().documentElement.scrollWidth<=app().documentElement.clientWidth,'Plan table caused horizontal overflow');
+    click('[data-undo]');
+    contains('.plan-result','Trial 1 and Trial 2');
+    await view('future/urban');
+    contains('main','SCI LOF 7.2 · item 18');
+    contains('main','Real context: Landscaping in Maltese towns');
+    frame.style.width='';
   }]
 ];
 

@@ -4,6 +4,7 @@ import { activities, activityOutcomeIds, resolveOutcome, outcomes, history, mdin
 import { labs, compareForceTrials, defaults, displayInputs } from '../src/models.js';
 import { circuitResults, connectWire, parallelWires, seriesWires, solveCircuit } from '../src/circuit.js';
 import { knightsAnswer, knightsEvents, missionEvidence, moveTimeline, romanClaims } from '../src/history-missions.js';
+import { comparePlans, planningReport } from '../src/planning-evidence.js';
 
 test('every activity has a unique ID, curriculum record and one experience', () => {
   assert.equal(activities.length, 12);
@@ -119,6 +120,20 @@ test('barrier reduces exposure and the model reports cost and clamps water level
   assert.ok(metric('flood','Exposed buildings / assets',{barrier:1}) < metric('flood','Exposed buildings / assets',{}));
   assert.equal(metric('flood','Cost',{barrier:1,wetland:1}),600);
   assert.equal(metric('flood','Residual water level',{barrier:2,wetland:1}),0);
+});
+test('planning comparison retains changed settings, costs and percentage-point deltas', () => {
+  const trial = ({solar}) => {
+    const values={...defaults('solar'),solar};
+    return {inputs:displayInputs('solar',values),results:labs.solar.run(values)};
+  };
+  const trials = [trial({solar:5}),trial({solar:10}),trial({solar:15})];
+  const selected = comparePlans(trials,[1,2]);
+  assert.deepEqual(selected.settings,['Solar size (MW): 10 → 15']);
+  assert.equal(selected.metrics.find(m=>m.name==='Capital cost').change,'+3250 €k');
+  assert.ok(selected.metrics.find(m=>m.name==='Demand met by solar').change.endsWith(' pp'));
+  assert.match(planningReport(trials,[1,2]),/^Trial 2 compared with Trial 3/);
+  assert.equal(comparePlans(trials,[1,1]),null);
+  assert.equal(comparePlans(trials.slice(0,1)),null);
 });
 test('conservation, storage, greening and species loss affect model outputs', () => {
   assert.ok(metric('water','Shortfall',{save:30}) < metric('water','Shortfall',{}));

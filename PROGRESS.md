@@ -2,6 +2,12 @@
 
 **Release status: in development.**
 
+## Malta 2050 comparison and curriculum · 22 November 2026
+
+Students can select a baseline and an option from their recorded scenarios, compare their settings and measures, and examine signed changes in cost, exposure, habitat, water or electricity. Reports include that comparison. Sustainable Energy now includes a Year 10 Geography mapping and an Energy and Water Agency source. Urban Planning includes a Year 7 Science mapping and guidance from Malta’s Environment and Resources Authority. All twelve activities now have a source-checked default outcome.
+
+The build, 22 automated tests and six browser acceptance checks passed. Browser checks included selecting earlier plans, persistence on reload, recovery after removing a selected trial, the Energy and Urban Planning curriculum links and the comparison table at a 390 px viewport. Model results and costs are fictional.
+
 ## Classroom accessibility and browser acceptance · 22 November 2026
 
 The simulation toolbar now has a keyboard-operable shortcut to its variables. Small-screen visual order follows the reading order. Curriculum filtering announces the number of matches, teacher review keeps focus after saving, and the continuous science illustrations stop when reduced motion is enabled or the tab is hidden.
@@ -62,10 +68,10 @@ The first working local release includes twelve investigations: five science mod
 ## Remaining work
 
 - Add a richer 3D presentation and accessible interaction layer. Current scenes are illustrated Canvas 2D with scripted animations. Mdina has a three-stop perspective tour and interactive evidence. Continuous camera movement and richer reconstruction detail remain open.
-- Extend curriculum mapping for Energy and Urban Planning and confirm school adoption of older documents for 2026–27.
+- Confirm school adoption of older curriculum documents for 2026–27 and extend mappings where pilot teachers need additional coverage.
 - Extend the historical missions with further source types and qualified perspectives. Historical characters use scripted questions.
 - Add an optional provider-backed tutor and aggregate misconception reporting if needed for a later release. The current package uses contextual scripted hints and individual teacher feedback.
 - Extend English text extraction for future Maltese translation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority: deepen the Malta 2050 comparison workflow and add a defensible evidence activity for the remaining energy and urban planning objectives.
+Next implementation priority: review the original acceptance brief against the current build, run print and accessibility checks where supported, and identify the remaining decisions for a school pilot.

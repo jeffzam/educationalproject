@@ -45,6 +45,8 @@
 - Explain the strongest option and why the real rainfall case and fictional coastal scenario require different kinds of evidence.
 - Follow-up. Identify what a planner would need to know about drainage, elevation or maintenance before recommending an actual project.
 
+For other Malta 2050 lessons, record an initial scenario and at least two alternatives. Use **Compare two plans** to choose which pair to discuss. In Sustainable Energy, balance grid electricity needs against capital cost. In Urban Planning, compare heat, runoff, access and habitat, then use the Environment and Resources Authority source to identify one detail the fictional model leaves out.
+
 ## Evidence sheet
 
 | Prompt | Student response |

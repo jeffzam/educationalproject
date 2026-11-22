@@ -94,6 +94,11 @@ p + p { margin-top: .5rem; }
 #wires li { display:flex; flex-wrap:wrap; gap:.3rem .6rem; align-items:center; justify-content:space-between; }
 #wires button { padding:.28rem .65rem; }
 .trial-comparison { padding:.85rem; background:#1b2b45; border-radius:.6rem; margin-bottom:1rem; }
+.plan-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem; margin-bottom:.65rem; }
+.plan-table { margin-bottom:.65rem; }
+.plan-table table { width:100%; border-collapse:collapse; font-size:.875rem; }
+.plan-table caption { color:var(--muted); text-align:left; padding:.45rem 0; }
+.plan-table :is(th,td) { text-align:left; vertical-align:top; border-bottom:1px solid var(--line); padding:.3rem; }
 .mission-prompts, .mission-check, .mission-feedback:not(:empty) { margin-top:.85rem; }
 .mission-feedback ol { padding-left:1.6rem; }
 .mission-feedback li + li { margin-top:.45rem; }

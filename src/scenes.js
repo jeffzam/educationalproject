@@ -145,8 +145,8 @@ export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, 
     }
     if (id==='flood' && v.barrier) path([[0,247],[180,237],[340,205]],'#e5ddbe',false,2+v.barrier*4);
     if (id==='flood' && v.wetland) for(let i=0;i<18;i++) dot(33+i*9,242+Math.sin(i)*4,4,'#75bf80');
-    if (id==='urban') for(let i=0;i<(v.trees || 20)/3;i++) dot(32+(i*109)%650,170+(i*61)%61,4,'#183f32');
-    if (id==='solar') for(let i=0;i<(v.solar || 4);i++) prism(350+i%10*22,172+Math.floor(i/10)*16,14,2,7,'#375c87','#203144','#385d95');
+    if (id==='urban') for(let i=0;i<(v.trees ?? 20)/3;i++) dot(32+(i*109)%650,170+(i*61)%61,4,'#183f32');
+    if (id==='solar') for(let i=0;i<(v.solar ?? 4);i++) prism(350+i%10*22,172+Math.floor(i/10)*16,14,2,7,'#375c87','#203144','#385d95');
     if (id==='water') {
       box(535,72,61,65,'#203c55');
       box(540,133-Math.min(55,Number(results[3]?.[1])*.68),51,Math.min(55,Number(results[3]?.[1])*.68)||0,'#63d6ff');
