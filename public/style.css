@@ -19,6 +19,7 @@ button, .button {
 }
 button:hover, .button:hover { filter: brightness(1.13); }
 button:disabled { opacity: .63; cursor: default; }
+button[hidden] { display:none; }
 button.secondary, button.quiet { color: var(--ink); background: #20304a; border-color: #425570; }
 button.quiet { background: transparent; padding: .35rem .7rem; font-size: .88rem; }
 button.quiet[aria-pressed=true] { border-color: var(--accent); color: var(--accent); }
@@ -84,6 +85,7 @@ p + p { margin-top: .5rem; }
 .scene-object { position:absolute; z-index:1; top:55%; left:53%; transform:translateX(-25%); box-shadow:0 2px 12px #100f2aaa; font-size:.875rem; padding:.46rem .68rem; }
 .scene-object[data-stop="0"] { left:45%; }
 .scene-object[data-stop="2"] { left:62%; }
+.scene-object.roman-object { top:76%; }
 .scene-controls { display:flex; gap:.65rem; flex-wrap:wrap; padding:.9rem; }
 .surface-controls { padding:0 .9rem .9rem; }
 .surface-controls button[aria-pressed=true] { border-color:var(--accent); color:var(--accent); }

@@ -1,3 +1,5 @@
+import { activities } from '/src/content.js';
+
 const frame = document.querySelector('#app');
 const log = document.querySelector('#results');
 const summary = document.querySelector('#summary');
@@ -11,6 +13,11 @@ const element = selector => {
 const text = selector => element(selector).textContent;
 const contains = (selector,phrase) => assert(text(selector).includes(phrase),selector+' is missing '+phrase);
 const click = selector => element(selector).click();
+async function clickAndNavigate(selector) {
+  const changed=new Promise(resolve=>frame.contentWindow.addEventListener('hashchange',resolve,{once:true}));
+  click(selector);
+  await changed;
+}
 const write = (selector,value,event='input') => {
   const control = element(selector);
   control.value = value;
@@ -45,6 +52,29 @@ const checks = [
       await view(route);
       contains('main h1',heading);
     }
+  }],
+  ['All twelve activities render their investigation and evidence controls',async()=>{
+    for (const activity of activities) {
+      await view(activity.group+'/'+activity.id);
+      contains('main h1',activity.question);
+      element('#simulation');
+      element('#notebook');
+      if (activity.group==='history') element('#history-mission');
+      else element('#variables');
+    }
+  }],
+  ['Incomplete evidence and an empty curriculum search receive clear messages',async()=>{
+    await view('outcomes');
+    write('#filters input[name="query"]','nonexistent test query');
+    contains('#filter-status','0 outcomes found');
+    contains('#matches','No outcomes match these filters.');
+    assert(element('#planner button').disabled,'Planner accepted an empty outcome list');
+    await view('future/water');
+    for (const name of ['prediction','observations','explanation','reflection']) {
+      write('#notebook [name="'+name+'"]','Fictional checkpoint response.');
+    }
+    element('#notebook').requestSubmit();
+    contains('#status','Record at least one trial before submitting.');
   }],
   ['Forces evidence and keyboard focus at phone width',async()=>{
     frame.style.width='390px';
@@ -105,6 +135,11 @@ const checks = [
     contains('#review','energywateragency.gov.mt/water');
     element('#assessment').requestSubmit();
     assert(app().activeElement===element('#assessment button'),'Teacher review lost keyboard focus');
+    let printed=false;
+    frame.contentWindow.print=()=>{printed=true;};
+    click('#review [data-print]');
+    assert(printed,'Print dialog was not requested');
+    contains('#review .printable','Malta 2050 Planning Report');
   }],
   ['Malta 2050 compares selected plans across a reload',async()=>{
     frame.style.width='390px';
@@ -127,6 +162,36 @@ const checks = [
     contains('main','SCI LOF 7.2 · item 18');
     contains('main','Real context: Landscaping in Maltese towns');
     frame.style.width='';
+  }],
+  ['Five-minute demonstration connects its three outcomes to live teacher evidence',async()=>{
+    await view('home');
+    await clickAndNavigate('[data-demo]');
+    click('[data-run]');
+    click('[data-friction=".5"]');
+    click('[data-run]');
+    await clickAndNavigate('[data-next]');
+    assert(element('#roman-mosaic').hidden,'Mosaic is visible before entering the reconstruction');
+    click('[data-portal]');
+    assert(!element('#roman-mosaic').hidden,'Mosaic interaction did not appear');
+    click('#roman-mosaic');
+    assert(element('#source-0').open,'Mosaic evidence did not open');
+    click('#source-0 [data-source]');
+    await clickAndNavigate('[data-next]');
+    click('[data-run]');
+    write('#variables [name="barrier"]','1');
+    click('[data-run]');
+    contains('#plan-comparison','+400 €k');
+    await clickAndNavigate('[data-next]');
+    contains('#filter-status','3 outcomes found');
+    contains('#matches','5.1.3');
+    contains('#matches','HIS 7.4');
+    contains('#matches','8.3');
+    await clickAndNavigate('[data-next]');
+    contains('#review','Demo group · live investigation');
+    contains('#review','6.71 m less');
+    await clickAndNavigate('[data-restart]');
+    contains('#trials','Run a trial to record');
+    await clickAndNavigate('[data-end]');
   }]
 ];
 

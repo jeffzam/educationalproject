@@ -33,4 +33,5 @@ This version uses browser storage for anonymous demonstration work. All users of
 
 - [Curriculum source register](docs/CURRICULUM.md)
 - [Technical specification and extension guide](docs/ARCHITECTURE.md)
+- [Classroom pilot acceptance](docs/ACCEPTANCE.md)
 - [Development checkpoint and testing report](PROGRESS.md)

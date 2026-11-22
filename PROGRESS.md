@@ -2,6 +2,10 @@
 
 **Release status: in development.**
 
+## Classroom demonstration acceptance · 22 November 2026
+
+The five-minute demo now opens the Roman mosaic from inside the reconstruction and shows the three official outcomes used in the demonstration. The repeatable browser suite covers all twelve activity entry points, evidence validation and the full demonstration, including live educator evidence and reset. The build, 22 automated tests and nine browser acceptance checks passed. See the [pilot acceptance matrix](docs/ACCEPTANCE.md) for what was verified and what still needs school equipment or external confirmation.
+
 ## Malta 2050 comparison and curriculum · 22 November 2026
 
 Students can select a baseline and an option from their recorded scenarios, compare their settings and measures, and examine signed changes in cost, exposure, habitat, water or electricity. Reports include that comparison. Sustainable Energy now includes a Year 10 Geography mapping and an Energy and Water Agency source. Urban Planning includes a Year 7 Science mapping and guidance from Malta’s Environment and Resources Authority. All twelve activities now have a source-checked default outcome.
@@ -74,4 +78,4 @@ The first working local release includes twelve investigations: five science mod
 - Extend English text extraction for future Maltese translation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority: review the original acceptance brief against the current build, run print and accessibility checks where supported, and identify the remaining decisions for a school pilot.
+Next implementation priority: validate actual print output and run the acceptance suite on representative school devices with assistive technology where available.
