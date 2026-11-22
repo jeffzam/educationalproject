@@ -2,6 +2,7 @@ import { activities, groups, outcomes, history, levels, rubric, floodCase, mdina
 import { labs, budget, compareForceTrials, defaults, displayInputs } from './models.js';
 import { scene } from './scenes.js';
 import { circuitNotes, circuitResults, connectWire, parallelWires, seriesWires, terminals } from './circuit.js';
+import { missionEvidence, mountHistoryMission } from './history-missions.js';
 
 const main = document.querySelector('main');
 const navigation = [
@@ -176,7 +177,8 @@ function evidenceRows(activity, record) {
     }).join('\n')],['Interpreter questions',record.questions.join('\n')],['Model assumptions',activity.id==='electric' && record.trials.some(trial=>Object.hasOwn(trial.inputs,'Wiring')) ? labs.electric.notes+' '+circuitNotes : labs[activity.id]?.notes || 'Scene and character dialogue are educational interpretations.'],
     ['Teacher judgement',record.review?.judgement || 'Awaiting teacher review'],['Proposed rubric',record.review?.scores?.map((score,i)=>rubric[i]+': '+score).join('\n')],
     ['Teacher feedback / next steps',record.review?.feedback],['Suggested next step','Compare your conclusion with another trial or source and explain what would strengthen it.'],
-    ...(activity.id==='forces' && record.trials.length>1 ? [['Latest trial comparison',forceComparison(record.trials)]] : [])];
+    ...(activity.id==='forces' && record.trials.length>1 ? [['Latest trial comparison',forceComparison(record.trials)]] : []),
+    ...(activity.group==='history' ? [['History mission evidence',missionEvidence(activity.id,record.mission)]] : [])];
 }
 const newDraft = a => ({
   learner:'',prediction:'',observations:'',explanation:'',reflection:'',
@@ -208,6 +210,7 @@ function investigation(a, params) {
     (mdina ? '<div class="tour-notes"><h2 id="mdina-stop"></h2><p id="mdina-description"></p><p id="mdina-compare" class="muted"></p><p class="muted">Use the buttons or focus the scene and press the left or right arrow key.</p></div>' : '')+'</div>'+
     (electric ? '<section class="panel"><div class="section-head"><h2>Circuit workbench</h2><button class="secondary" type="button" id="circuit-mode" aria-pressed="false">Build your own circuit</button></div><div id="circuit-builder" hidden><p>Choose two terminals to add a wire. Open the switch while you build, then close it to test the circuit.</p><div class="circuit-terminals">'+Object.entries(terminals).map(([id,name])=>'<button type="button" class="secondary" data-terminal="'+id+'" aria-pressed="false">'+name+'</button>').join('')+'</div><div class="actions"><button class="secondary" type="button" data-wire-template="series">Load series example</button><button class="secondary" type="button" data-wire-template="parallel">Load parallel example</button><button class="secondary" type="button" id="clear-wires">Clear wires</button></div><p id="wire-status" class="muted" aria-live="polite"></p><ul id="wires"></ul><details><summary>Read workbench assumptions</summary><p>'+esc(circuitNotes)+'</p></details></div></section>' : '')+
     (lab ? '<div class="panel"><div class="section-head"><h2>Model results</h2><span class="muted" id="budget"></span></div><div id="metrics" class="metrics"></div><details><summary>Read model assumptions</summary><p>'+esc(lab.notes)+'</p></details></div><section class="panel"><h2>Recorded trials</h2><div id="trials"></div></section>' : '<div class="panel"><p class="eyebrow">'+esc(dossier.place)+'</p><h2>Evidence desk</h2><div id="sources"></div><h3>Ask the '+esc(dossier.character.toLowerCase())+'</h3><p class="muted">Scripted fictional interpretation</p><div class="actions">'+['Tell me about your work','What should I compare?','What is uncertain?'].map((q,i)=>'<button class="secondary" data-question="'+i+'">'+q+'</button>').join('')+'</div><p id="reply" aria-live="polite"></p></div>')+
+    (dossier ? '<section class="panel" id="history-mission"></section>' : '')+
     (a.id==='flood' ? '<section class="panel"><h2>'+esc(floodCase[0])+'</h2><p>'+esc(floodCase[1])+'</p><p>'+link(floodCase[2],'Read the national flood risk assessment')+'</p><button class="secondary" data-source="0">Mark case study examined</button></section>' : '')+
     '</section><aside class="stack"><section class="panel"><h2>Mission brief</h2><p class="eyebrow">Learning outcome</p><p>'+esc(o.summary)+'</p><p class="muted">'+esc(o.status)+'</p>'+(o.source?'<p>'+link(o.source,o.code+' · official source')+'</p>':'')+'<label>Learning level<select id="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><p id="guidance"></p><details><summary>Get a hint</summary><p>'+esc(a.group==='history' ? 'Ask what survives today. Which part of your claim follows directly from that source?' : 'Compare two trials. What stayed the same, and what changed?')+'</p></details></section>'+
     (lab?'<section class="panel"><h2>Change the variables</h2><form id="variables">'+lab.controls.map(control=>inputSettings(control,d.values)).join('')+'</form></section>':'')+'</aside></div>'+
@@ -417,6 +420,7 @@ function investigation(a, params) {
       move(event.key==='ArrowLeft' ? -1 : 1);
     };
     main.querySelector('#sources').innerHTML = dossier.sources.map(([name,detail,url],i)=>'<details id="source-'+i+'"><summary>'+esc(name)+'</summary><p>'+esc(detail)+'</p><p>'+link(url,'Open original source')+'</p><button class="secondary" data-source="'+i+'">Mark source examined</button></details>').join('');
+    mountHistoryMission(main.querySelector('#history-mission'),a.id,d,save,esc);
     if (mdina) main.querySelector('#mdina-object').onclick = () => {
       const evidence = main.querySelector('#source-'+mdinaStops[position].source);
       evidence.open = true;
@@ -479,11 +483,11 @@ function educator() {
     educator(); demoBar(); main.querySelector('#submission').value='demo-cart'; review();
   };
   main.querySelector('[data-csv]').onclick=()=> {
-    const headings=['Learner','Activity','Outcome','Prediction','Observations','Explanation','Reflection','Trials','Sources','Judgement','Rubric','Feedback'];
+    const headings=['Learner','Activity','Outcome','Prediction','Observations','Explanation','Reflection','Trials','Sources','Judgement','Rubric','Feedback','History mission evidence'];
     const rows=submissions.map(s=>{
       const a=activities.find(a=>a.id===s.activity);
       const evidence = evidenceRows(a,s);
-      return [s.learner,a.title,findOutcome(a).code || findOutcome(a).strand,s.prediction,s.observations,s.explanation,s.reflection,evidence[7][1],evidence[8][1],s.review?.judgement,s.review?.scores?.join(' / '),s.review?.feedback];
+      return [s.learner,a.title,findOutcome(a).code || findOutcome(a).strand,s.prediction,s.observations,s.explanation,s.reflection,evidence[7][1],evidence[8][1],s.review?.judgement,s.review?.scores?.join(' / '),s.review?.feedback,a.group==='history' ? missionEvidence(a.id,s.mission) : ''];
     });
     download('learningverse-evidence.csv',[headings,...rows].map(row=>row.map(csvCell).join(',')).join('\r\n'),'text/csv');
   };

@@ -94,6 +94,13 @@ p + p { margin-top: .5rem; }
 #wires li { display:flex; flex-wrap:wrap; gap:.3rem .6rem; align-items:center; justify-content:space-between; }
 #wires button { padding:.28rem .65rem; }
 .trial-comparison { padding:.85rem; background:#1b2b45; border-radius:.6rem; margin-bottom:1rem; }
+.mission-prompts, .mission-check, .mission-feedback:not(:empty) { margin-top:.85rem; }
+.mission-feedback ol { padding-left:1.6rem; }
+.mission-feedback li + li { margin-top:.45rem; }
+.timeline { padding-left:1.4rem; }
+.timeline li { padding:.45rem 0; border-bottom:1px solid var(--line); }
+.timeline-controls { display:inline-flex; flex-wrap:wrap; gap:.3rem; margin:.25rem .4rem; }
+.timeline-controls button { padding:.2rem .55rem; }
 .tour-notes { padding:0 .9rem 1rem; }
 .tour-notes h2 { font-size:1.15rem; }
 @keyframes portal { 0% { opacity:.38; filter:brightness(1.65) saturate(.4); } 100% { opacity:1; filter:none; } }

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { activities, outcomes, history, mdinaStops } from '../src/content.js';
 import { labs, compareForceTrials, defaults, displayInputs } from '../src/models.js';
 import { circuitResults, connectWire, parallelWires, seriesWires, solveCircuit } from '../src/circuit.js';
+import { knightsAnswer, knightsEvents, missionEvidence, moveTimeline, romanClaims } from '../src/history-missions.js';
 
 test('every activity has a unique ID, curriculum record and one experience', () => {
   assert.equal(activities.length, 12);
@@ -25,6 +26,17 @@ test('each Mdina stop points to distinct evidence and supports comparison across
     assert.ok(history.mdina.sources[stop.source]?.[2].startsWith('https://'));
     assert.ok(stop.present && stop.medieval && stop.compare);
   }
+});
+test('history missions keep the selected order, source judgements and comparisons for review', () => {
+  const swapped=moveTimeline(knightsAnswer,0,1);
+  assert.equal(swapped[0],'grant');
+  assert.equal(knightsAnswer[0],'rhodes');
+  assert.equal(moveTimeline(swapped,0,-1),swapped);
+  assert.ok(missionEvidence('knights',{order:swapped}).startsWith('1. '+knightsEvents.grant));
+  assert.match(missionEvidence('roman',{choices:['yes','no','']}),/Every Roman family.*Evidence is insufficient/);
+  assert.ok(missionEvidence('roman',{choices:['yes','no','']}).includes(romanClaims[0].text));
+  assert.match(missionEvidence('mdina',{gate:'An entrance can control access.'}),/Town gate.*An entrance/);
+  assert.equal(missionEvidence('mdina',undefined),'');
 });
 for (const [id, lab] of Object.entries(labs)) {
   test(id + ' has deterministic, finite results at default and extreme inputs', () => {

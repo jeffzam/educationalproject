@@ -66,7 +66,9 @@ export const history = {
     sources: [
       ['Chronology dossier', 'Sequence the loss of Rhodes, the grant of Malta and the Knights’ formal entry into Mdina. The syllabus gives the endpoints for your timeline.', history8 + '#page=26'],
       ['Grand Harbour', 'Fort St Angelo’s position allowed control over approaches to Grand Harbour. Identify one geographic advantage visible in the harbour view.', 'https://heritagemalta.mt/app/uploads/2022/06/Access-Statement-Fort-St-Angelo.pdf'],
-      ['Layers of building', 'The harbour includes defensive works from different periods. Heritage Malta identifies both Order and later British fortifications.', 'https://heritagemalta.mt/news/heritage-maltas-fortifications-harbour-cruise-is-a-must-this-summer/']
+      ['Layers of building', 'The harbour includes defensive works from different periods. Heritage Malta identifies both Order and later British fortifications.', 'https://heritagemalta.mt/news/heritage-maltas-fortifications-harbour-cruise-is-a-must-this-summer/'],
+      ['From Rhodes to Malta', 'The Order’s own history records its departure from Rhodes in 1523 and Charles V’s grant of Malta in 1530. Consider what perspective this source represents.', 'https://www.orderofmalta.int/history/11-century-to-the-present-day/'],
+      ['A residence at Fort St Angelo', 'Heritage Malta dates the Grand Master’s residence at Fort St Angelo to 1530–1558.', 'https://heritagemalta.mt/news/guided-tours-of-upper-fort-st-angelo-now-running-also-on-sundays/']
     ],
     responses: ['A harbour connects people and goods. How might an institution settling nearby change demand for work?', 'The view helps explain why this headland mattered. Find a source that supports your explanation.', 'Look at dates before treating the structures as contemporary. The scene compresses several features for teaching.']
   }

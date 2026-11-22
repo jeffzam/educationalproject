@@ -2,6 +2,12 @@
 
 **Release status: in development.**
 
+## Time Portal history missions · 22 November 2026
+
+Roman Malta now asks students to test claims against the scope of the archaeological evidence. Medieval Mdina records comparisons at all three stops. Malta Under the Knights adds a keyboard-operable timeline with feedback and links to the curriculum, Heritage Malta and the Order’s own historical account. Student choices and notes are included in teacher review and exports.
+
+The build and 20 automated tests passed. Browser checks verified incorrect and correct chronology feedback, keyboard reordering, saved order after reload, the historian report download, source-reliability feedback, Mdina note persistence and layout at a 390 px viewport.
+
 ## Electricity circuit workbench · 22 November 2026
 
 Students can wire the terminals of six bench components directly, remove individual wires and load series or parallel examples. The solver calculates current and bulb power from those connections, with explicit open, short and disconnected battery states. The investigation records wiring and results in its report. Component positions are fixed and the model uses ideal DC components.
@@ -45,9 +51,9 @@ The first working local release includes twelve investigations: five science mod
 
 - Add a richer 3D presentation and accessible interaction layer. Current scenes are illustrated Canvas 2D with scripted animations. Mdina has a three-stop perspective tour and interactive evidence. Continuous camera movement and richer reconstruction detail remain open.
 - Extend curriculum mapping and confirm school adoption of older documents for 2026–27. Add subject-level mappings for Social Studies and lower-secondary Science, and broader coverage for Geography and Environmental Studies.
-- Expand historical enquiry missions. Historical characters use scripted questions. The circuit workbench supports terminal-level wiring on a fixed bench, with six components.
+- Extend the historical missions with further source types and qualified perspectives. Historical characters use scripted questions.
 - Add an optional provider-backed tutor and aggregate misconception reporting if needed for a later release. The current package uses contextual scripted hints and individual teacher feedback.
 - Extend English text extraction for future Maltese translation, browser acceptance automation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority: expand Time Portal history missions beyond the current introductory enquiries. Preserve the shared outcome, reasoning and evidence workflow across all three modules.
+Next implementation priority: extend verified curriculum mapping and activity guidance for Malta 2050.
