@@ -37,6 +37,7 @@ let demo = -1;
 let demoState;
 let frame;
 let alertTimer;
+let refreshAnimation;
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const motionButton = document.querySelector('#motion');
 const reduced = () => state.motion ?? motionPreference.matches;
@@ -54,9 +55,11 @@ function save() {
 function syncMotion() {
   document.documentElement.dataset.motion = reduced() ? 'reduced' : 'full';
   motionButton.setAttribute('aria-pressed',String(reduced()));
+  refreshAnimation?.();
 }
 motionButton.addEventListener('click', () => { state.motion = !reduced(); syncMotion(); save(); });
 motionPreference.addEventListener('change', syncMotion);
+document.addEventListener('visibilitychange',()=>refreshAnimation?.());
 syncMotion();
 
 const escapeTable = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
@@ -93,7 +96,7 @@ function outcomeCard(outcome) {
 
 function outcomePage(params) {
   main.innerHTML = intro('Curriculum','Learning Outcomes Engine','Find an outcome, match it to an activity and build a differentiated lesson.')+
-  '<form class="panel filters" id="filters"><label>Search outcome, code or strand<input type="search" name="query"></label><label>Stage<select name="stage">'+option('','All stages')+option('Primary')+option('Secondary')+'</select></label><label>Year group<select name="year">'+option('','All years')+[...new Set(outcomes.map(o=>o.year))].sort((a,b)=>a-b).map(y=>option(y,'Year '+y)).join('')+'</select></label><label>Subject<select name="subject">'+option('','All subjects')+[...new Set(outcomes.map(o=>o.subject))].map(s=>option(s)).join('')+'</select></label><label>Strand<select name="strand">'+option('','All strands')+[...new Set(outcomes.map(o=>o.strand))].map(s=>option(s)).join('')+'</select></label><label>Verification<select name="verification">'+option('','All records')+option('verified','Verified sources')+option('pending','Proposed objectives')+'</select></label></form><div class="layout"><div id="matches" class="stack"></div><aside class="panel"><h2>Plan a lesson</h2><form id="planner" class="stack"><label>Outcome<select name="outcome" required></select></label><label>Activity<select name="activity" required></select></label><label>Learning level<select name="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><label>Duration<select name="duration">'+[20,30,40,60].map(m=>option(m,m+' minutes')).join('')+'</select></label><button>Generate lesson plan</button></form></aside></div><section id="lesson" class="stack"></section>';
+  '<form class="panel filters" id="filters"><label>Search outcome, code or strand<input type="search" name="query"></label><label>Stage<select name="stage">'+option('','All stages')+option('Primary')+option('Secondary')+'</select></label><label>Year group<select name="year">'+option('','All years')+[...new Set(outcomes.map(o=>o.year))].sort((a,b)=>a-b).map(y=>option(y,'Year '+y)).join('')+'</select></label><label>Subject<select name="subject">'+option('','All subjects')+[...new Set(outcomes.map(o=>o.subject))].map(s=>option(s)).join('')+'</select></label><label>Strand<select name="strand">'+option('','All strands')+[...new Set(outcomes.map(o=>o.strand))].map(s=>option(s)).join('')+'</select></label><label>Verification<select name="verification">'+option('','All records')+option('verified','Verified sources')+option('pending','Proposed objectives')+'</select></label></form><p id="filter-status" class="muted filter-status" role="status"></p><div class="layout"><div id="matches" class="stack"></div><aside class="panel"><h2>Plan a lesson</h2><form id="planner" class="stack"><label>Outcome<select name="outcome" required></select></label><label>Activity<select name="activity" required></select></label><label>Learning level<select name="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><label>Duration<select name="duration">'+[20,30,40,60].map(m=>option(m,m+' minutes')).join('')+'</select></label><button>Generate lesson plan</button></form></aside></div><section id="lesson" class="stack"></section>';
   const filters = main.querySelector('#filters');
   const planner = main.querySelector('#planner');
   planner.elements.level.value = 'Core';
@@ -109,6 +112,7 @@ function outcomePage(params) {
     (!f.verification.value || (o.source ? 'verified' : 'pending')===f.verification.value) &&
     [o.summary,o.code,o.subject,o.strand].join(' ').toLowerCase().includes(query));
     main.querySelector('#matches').innerHTML = matches.map(outcomeCard).join('') || '<p class="panel">No outcomes match these filters.</p>';
+    main.querySelector('#filter-status').textContent = matches.length+' '+(matches.length===1 ? 'outcome' : 'outcomes')+' found';
     planner.elements.outcome.innerHTML = matches.map(o=>option(o.id,(o.code || 'Proposed')+' · '+o.strand)).join('');
     if (matches.some(o=>o.id===selected)) planner.elements.outcome.value = selected;
     refreshActivities();
@@ -207,7 +211,7 @@ function investigation(a, params) {
     intro(a.title,a.question,o.enquiry || a.task)+
     '<div class="layout investigate"><section class="stack">'+
     (forces ? '<section class="panel"><h2>Make a prediction</h2><label>Predict what will happen and why.<textarea id="force-prediction" name="prediction" form="notebook" rows="2" maxlength="3000" required>'+esc(d.prediction)+'</textarea></label></section>' : '')+
-    '<div class="panel visual"><div class="scene-stage"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas>'+(mdina ? '<button type="button" class="scene-object" id="mdina-object">Inspect town gate</button>' : '')+'</div><div class="scene-controls">'+(lab ? '<button data-run>'+ (forces ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">'+(mdina ? 'Previous stop' : 'Look left')+'</button><button class="secondary" data-view="1">'+(mdina ? 'Next stop' : 'Look right')+'</button>')+'</div>'+
+    '<div class="panel visual"><div class="scene-stage"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas>'+(mdina ? '<button type="button" class="scene-object" id="mdina-object">Inspect town gate</button>' : '')+'</div><div class="scene-controls">'+(lab ? '<button data-run>'+ (forces ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button><button class="secondary" type="button" data-jump-variables>Go to variables</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">'+(mdina ? 'Previous stop' : 'Look left')+'</button><button class="secondary" data-view="1">'+(mdina ? 'Next stop' : 'Look right')+'</button>')+'</div>'+
     (forces ? '<div class="surface-controls"><p>Test friction while keeping the other settings fixed.</p><div class="actions"><button type="button" class="secondary" data-friction=".15" aria-pressed="false">Smoother surface</button><button type="button" class="secondary" data-friction=".5" aria-pressed="false">Rougher surface</button></div></div>' : '')+
     (mdina ? '<div class="tour-notes"><h2 id="mdina-stop"></h2><p id="mdina-description"></p><p id="mdina-compare" class="muted"></p><p class="muted">Use the buttons or focus the scene and press the left or right arrow key.</p></div>' : '')+'</div>'+
     (electric ? '<section class="panel"><div class="section-head"><h2>Circuit workbench</h2><button class="secondary" type="button" id="circuit-mode" aria-pressed="false">Build your own circuit</button></div><div id="circuit-builder" hidden><p>Choose two terminals to add a wire. Open the switch while you build, then close it to test the circuit.</p><div class="circuit-terminals">'+Object.entries(terminals).map(([id,name])=>'<button type="button" class="secondary" data-terminal="'+id+'" aria-pressed="false">'+name+'</button>').join('')+'</div><div class="actions"><button class="secondary" type="button" data-wire-template="series">Load series example</button><button class="secondary" type="button" data-wire-template="parallel">Load parallel example</button><button class="secondary" type="button" id="clear-wires">Clear wires</button></div><p id="wire-status" class="muted" aria-live="polite"></p><ul id="wires"></ul><details><summary>Read workbench assumptions</summary><p>'+esc(circuitNotes)+'</p></details></div></section>' : '')+
@@ -246,6 +250,7 @@ function investigation(a, params) {
   level.onchange = () => { d.level = level.value; guide.textContent = levels[d.level]; save(); };
   if (lab) {
     const variables = main.querySelector('#variables');
+    main.querySelector('[data-jump-variables]').onclick=()=>variables.querySelector('input, select').focus();
     function readResults(reveal = !forces) {
       results = useBuilder() ? circuitResults(d.values,d.circuitWires) : lab.run(d.values);
       main.querySelector('#metrics').innerHTML = reveal
@@ -268,18 +273,26 @@ function investigation(a, params) {
       surfaceButtons.forEach(button => button.setAttribute('aria-pressed',String(Number(button.dataset.friction)===d.values.friction)));
     }
     function stop() { cancelAnimationFrame(frame); active = false; lastTime=0; }
+    function animate() {
+      if (reduced() || document.hidden || useBuilder()) return;
+      const start = performance.now();
+      const tick = time => {
+        lastTime = (time-start)/1000;
+        draw();
+        frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+    }
+    if (['electric','matter'].includes(a.id)) refreshAnimation=()=>{
+      stop();
+      draw();
+      animate();
+    };
     function live() {
       stop();
       readResults();
       draw();
-      if (reduced() || useBuilder() || !['electric','matter'].includes(a.id)) return;
-      const start = performance.now();
-      const tick = time => {
-        lastTime = (time-start)/1000;
-        if (!reduced()) draw();
-        frame = requestAnimationFrame(tick);
-      };
-      frame = requestAnimationFrame(tick);
+      if (refreshAnimation) animate();
     }
     function trials() {
       const area = main.querySelector('#trials');
@@ -317,7 +330,8 @@ function investigation(a, params) {
         inputs.Wiring = d.circuitWires.map(([left,right])=>terminals[left]+' to '+terminals[right]).join('; ') || 'No wires';
       }
       d.trials.push({inputs,results:structuredClone(results)});
-      trials(); save(); announce('Trial '+d.trials.length+' recorded.');
+      const observed = forces ? results.find(([label])=>label==='Distance at 2 s')[1] : undefined;
+      trials(); save(); announce('Trial '+d.trials.length+' recorded.'+(forces ? ' The cart travelled '+observed+' metres in two seconds.' : ''));
       if (!forces) return;
       stop();
       active=true;
@@ -513,6 +527,7 @@ function educator() {
       educator(); demoBar();
       main.querySelector('#submission').value = id;
       main.querySelector('#submission').dispatchEvent(new Event('change'));
+      main.querySelector('#assessment button').focus({preventScroll:true});
       announce('Teacher judgement saved.');
     };
     body.querySelector('[data-export]').onclick=()=>exportEvidence(a,record);
@@ -585,6 +600,7 @@ document.addEventListener('click',event=>{
 
 function render(focus=true) {
   cancelAnimationFrame(frame);
+  refreshAnimation = undefined;
   const [route, query] = location.hash.slice(1).split('?');
   const [page,id] = route.split('/');
   const params=new URLSearchParams(query);

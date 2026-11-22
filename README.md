@@ -13,6 +13,8 @@ node scripts/serve.mjs
 
 Open http://127.0.0.1:4173/. The server builds the static site into `dist/` when it starts. Run `node scripts/build.mjs` after source edits, then reload the browser.
 
+For repeatable browser acceptance checks, run `node scripts/serve.mjs --qa` and open http://127.0.0.1:4174/__qa. The suite uses a separate local origin and fictional evidence. The test runner is excluded from the deployable files.
+
 ## Use it in a lesson
 
 - **Educators** can select a sourced or proposed outcome, generate a 20–60 minute differentiated lesson, preview the activity and share a link. Use a shared HTTPS host for links intended for other devices.

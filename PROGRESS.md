@@ -2,6 +2,12 @@
 
 **Release status: in development.**
 
+## Classroom accessibility and browser acceptance · 22 November 2026
+
+The simulation toolbar now has a keyboard-operable shortcut to its variables. Small-screen visual order follows the reading order. Curriculum filtering announces the number of matches, teacher review keeps focus after saving, and the continuous science illustrations stop when reduced motion is enabled or the tab is hidden.
+
+A local browser acceptance suite passed all five checks: the seven navigation destinations, phone-width layout and forces evidence, the Mdina keyboard and portal workflow, reduced motion after reload, and preservation of the Year 9 water outcome through teacher review. The build and 21 Node tests passed. The ordinary server returned 404 for the test route, and the production build excludes the runner.
+
 ## Cross-subject curriculum assignments · 22 November 2026
 
 The planner now supports multiple outcome mappings for the same activity. Assignment links carry the selected outcome through the student mission, submission, review and exports. Three verified mappings add Year 6 Social Studies for Roman Malta, Year 7 Science for States of Matter, and Year 9 Geography for Water Management. The Water Management lesson also includes a source from Malta’s Energy and Water Agency. Earlier water submissions retain the proposed outcome under which they were recorded.
@@ -59,7 +65,7 @@ The first working local release includes twelve investigations: five science mod
 - Extend curriculum mapping for Energy and Urban Planning and confirm school adoption of older documents for 2026–27.
 - Extend the historical missions with further source types and qualified perspectives. Historical characters use scripted questions.
 - Add an optional provider-backed tutor and aggregate misconception reporting if needed for a later release. The current package uses contextual scripted hints and individual teacher feedback.
-- Extend English text extraction for future Maltese translation, browser acceptance automation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
+- Extend English text extraction for future Maltese translation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority: strengthen classroom accessibility and repeatable browser acceptance checks.
+Next implementation priority: deepen the Malta 2050 comparison workflow and add a defensible evidence activity for the remaining energy and urban planning objectives.

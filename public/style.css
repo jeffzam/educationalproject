@@ -128,6 +128,7 @@ details p { margin:.4rem 0; }
 .chart > div { display:grid; grid-template-columns:5rem minmax(0,1fr) 6rem; gap:.6rem; align-items:center; }
 .notebook form { display:grid; gap:.9rem; }
 .notebook-fields,.filters { display:grid; gap:.8rem; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.filter-status { margin-top:.6rem; }
 .filters { grid-template-columns:repeat(3,minmax(0,1fr)); }
 ul { padding-left:1.3rem; } li + li { margin-top:.4rem; }
 .lines { white-space: pre-wrap; overflow-wrap:anywhere; }
@@ -139,7 +140,6 @@ ul { padding-left:1.3rem; } li + li { margin-top:.4rem; }
   nav { gap:0 1rem; }
   nav a { padding:.44rem 0; }
   .layout { grid-template-columns:1fr; }
-  .investigate aside { grid-row:1; }
   .hero { min-height:360px; }
   .hero-art { inset:0 0 0 42%; opacity:.55; }
   .filters { grid-template-columns:repeat(2,minmax(0,1fr)); }

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learningverse browser acceptance tests</title>
+  <style>
+    body { font: 1rem/1.5 system-ui, sans-serif; margin: 1rem auto; max-width: 1040px; padding: 0 1rem; }
+    iframe { width: 100%; max-width: 100%; border: 1px solid #53627a; height: 600px; }
+    li[data-result=failed] { color: #962e20; }
+  </style>
+  <script type="module" src="/__qa/acceptance.mjs"></script>
+</head>
+<body>
+  <h1>Learningverse browser acceptance tests</h1>
+  <p id="summary" role="status">Running tests…</p>
+  <ol id="results"></ol>
+  <iframe title="Local Learningverse test instance" id="app"></iframe>
+</body>
+</html>
