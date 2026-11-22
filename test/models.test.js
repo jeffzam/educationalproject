@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { activities, outcomes, history, mdinaStops } from '../src/content.js';
-import { labs, defaults, displayInputs } from '../src/models.js';
+import { labs, compareForceTrials, defaults, displayInputs } from '../src/models.js';
 
 test('every activity has a unique ID, curriculum record and one experience', () => {
   assert.equal(activities.length, 12);
@@ -40,6 +40,19 @@ const metric = (id, name, changed) => labs[id].run({...defaults(id),...changed})
 test('cart follows constant acceleration and stays still below static friction', () => {
   assert.equal(metric('forces','Distance at 2 s',{angle:0,push:10,friction:0,mass:2}),10);
   assert.equal(metric('forces','Distance at 2 s',{angle:0,push:1,friction:.5,mass:2}),0);
+});
+test('cart comparison reports recorded distance and distinguishes a fair test from several changed settings', () => {
+  const trial = settings => {
+    const inputs = {...defaults('forces'), ...settings};
+    return { inputs: displayInputs('forces', inputs), results: labs.forces.run(inputs) };
+  };
+  const smoother = trial({friction:.15});
+  const rougher = trial({friction:.5});
+  assert.deepEqual(compareForceTrials(smoother,rougher), {
+    first:9.2,second:2.49,difference:-6.71,changed:[['Friction coefficient',.15,.5]]
+  });
+  assert.equal(compareForceTrials(smoother,smoother).changed.length,0);
+  assert.equal(compareForceTrials(smoother,trial({friction:.5,mass:6})).changed.length,2);
 });
 test('circuits open and parallel branches receive more current than series', () => {
   assert.equal(metric('electric','Circuit current',{switch:0}),0);

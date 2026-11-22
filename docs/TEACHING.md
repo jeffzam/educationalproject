@@ -5,7 +5,7 @@
 **Intention** — Predict how friction affects motion, then explain the outcome using a fair comparison. Curriculum link: Year 5 Primary Science 5.1.3.
 
 - 8 minutes. Ask pupils how a toy moves on a tiled floor and on a rug. Record a prediction with a reason.
-- 22 minutes. Keep the mass, ramp, gravity and push fixed. Change friction, release the cart twice and compare the distances.
+- 22 minutes. Release the cart with Smoother surface selected, switch to Rougher surface and release it again. Ask students to use the comparison to verify friction was the only setting that changed before they interpret the distances.
 - 10 minutes. Write an explanation that connects friction and distance. Reflect on an assumption the model makes.
 - Follow-up. Test a new surface using a real toy and agree what to keep the same.
 

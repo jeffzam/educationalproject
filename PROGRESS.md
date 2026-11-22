@@ -2,6 +2,12 @@
 
 **Release status: in development.**
 
+## Forces and Motion teacher demonstration · 22 November 2026
+
+The lab now shows the prediction before the controls reveal a two-second result. The smoother and rougher presets change only friction, and the latest comparison names every setting that changed. The classroom demo carries the recorded prediction and trials into educator review and the downloadable investigation report. A fictional example remains available.
+
+The build and 17 automated tests passed. Browser checks followed the five demo stages, verified a 9.20 m versus 2.49 m comparison with all other settings fixed, and confirmed that the live prediction, comparison and teacher feedback carried through to the report. The cart animation remains schematic.
+
 ## Medieval Mdina checkpoint · 22 November 2026
 
 Students can walk between three illustrated stops using buttons or the arrow keys. The portal preserves the selected stop when switching eras. Each on-scene evidence button opens and focuses the corresponding dossier entry, which students can record in their notebook.
@@ -32,4 +38,4 @@ The first working local release includes twelve investigations: five science mod
 - Extend English text extraction for future Maltese translation, browser acceptance automation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority from the original concept brief: polish the Forces and Motion teacher demonstration, with a clear prediction, controlled comparison and evidence review. Preserve the shared outcome, reasoning and evidence workflow across all three modules.
+Next implementation priority: improve the Space and Earth investigation so its illustrations convey the same day-night and Moon phase relationships as its model. Preserve the shared outcome, reasoning and evidence workflow across all three modules.

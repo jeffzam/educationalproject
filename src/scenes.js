@@ -159,12 +159,13 @@ export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, 
   if (id==='forces') {
     for(let i=0;i<12;i++) path([[i*70-30,300],[290+i*20,129]],'#9ba9ff22');
     for(let i=0;i<5;i++) path([[0,184+i*i*6],[720,184+i*i*6]],'#9ba9ff22');
-    const y = 144 - (v.angle ?? 12)*2, delta = 186-y;
+    const delta = (v.angle ?? 12)*2.65;
+    const y = 186-delta;
     path([[112,y],[606,186],[606,229],[112,y+43]],'#2a4481',true);
     path([[112,y],[160,y-22],[654,164],[606,186]],'#5980af',true);
     const distance = Number(results[4]?.[1]) || 0;
-    const fraction = Math.min(.9,distance/30) * t*t;
-    const x = 172+fraction*420, by = y+(x-112)*delta/494;
+    const travelled = distance*t*t;
+    const x = 172+(travelled/110)*365, by = y+(x-112)*delta/494;
     prism(x,by,54,30,17,'#8dc6fd','#4d72d8','#ceebff');
     const push = v.push ?? 12, resistance = results[1]?.[1] || 0;
     const arrow = (length,color) => {
@@ -175,6 +176,7 @@ export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, 
     };
     arrow(push*2,'#83ebd9'); arrow(-resistance*4,'#ffab9d');
     label('Cart on an adjustable ramp',22,28);
+    if (active) label(travelled.toFixed(2)+' m travelled',22,247);
     label('Push',540,272,'#83ebd9'); label('Friction',605,272,'#ffab9d');
   } else if (id==='electric') {
     const current = results[0]?.[1] || 0;

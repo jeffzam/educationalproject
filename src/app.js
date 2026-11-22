@@ -1,5 +1,5 @@
 import { activities, groups, outcomes, history, levels, rubric, floodCase, mdinaStops } from './content.js';
-import { labs, budget, defaults, displayInputs } from './models.js';
+import { labs, budget, compareForceTrials, defaults, displayInputs } from './models.js';
 import { scene } from './scenes.js';
 
 const main = document.querySelector('main');
@@ -8,11 +8,11 @@ const navigation = [
   ['outcomes','Learning Outcomes'],['educator','Educator'],['student','Student'],['resources','Resources']
 ];
 const reportNames = {science:'Science Investigation Report',history:'Historian’s Evidence Report',future:'Malta 2050 Planning Report'};
-const steps = [['science/forces','Test a prediction','Change ramp friction between two trials and compare the distances.'],
+const steps = [['science/forces','Test a prediction','Read the sample prediction aloud. Release the cart on the smoother surface, select the rougher surface and release it again. Show the class what changed and what stayed fixed.'],
   ['history/roman','Examine historical evidence','Enter the portal and inspect the mosaic and courtyard records.'],
   ['future/flood','Compare planning decisions','Record a baseline, add a barrier and compare exposed sites and cost.'],
   ['outcomes','Show curriculum links','Reveal the verified outcomes for inquiry, Roman evidence and flooding.'],
-  ['educator','Review evidence','Open the fictional cart investigation, apply the rubric and export the report.']];
+  ['educator','Review evidence','Review the cart trials you recorded in minute one, apply the rubric and export the report. A fictional example is available if you skipped the trials.']];
 const fields = {
   science: [['prediction','Predict what will happen and why.'],['observations','Describe what you observed.'],['explanation','Explain the results with evidence from your trials.'],['reflection','What would you test next?']],
   history: [['prediction','What do you expect the sources to reveal?'],['observations','Describe what you observed in the sources.'],['explanation','Make a claim and name the evidence supporting it.'],['reflection','Which details are uncertain, and what would help verify them?']],
@@ -154,6 +154,16 @@ function download(name, text, type = 'text/plain') {
 const reportText = (title, rows) => [title, ...rows.map(([k,v])=>k+'\n'+(v || '—'))].join('\n\n');
 const curriculumText = o => [o.code,o.summary,o.status,o.document,o.source].filter(Boolean).join(' · ');
 const metricText = metrics => metrics.map(([label,value,unit])=>label+': '+value+(unit?' '+unit:'')).join('\n');
+function forceComparison(trials) {
+  const { first, second, difference, changed } = compareForceTrials(trials.at(-2), trials.at(-1));
+  const travelled = difference === 0 ? 'The recorded distances were the same.' :
+    'The cart travelled '+Math.abs(difference)+' m '+(difference > 0 ? 'farther' : 'less')+' in the later trial.';
+  const inputs = changed.map(([name, before, after]) => name+' changed from '+before+' to '+after+'.').join(' ');
+  const interpretation = changed.length === 0 ? 'No settings changed. This pair repeats the same test.' :
+    changed.length === 1 ? 'The other settings stayed fixed.' :
+    'Several settings changed. Change one setting at a time to see its individual effect.';
+  return 'Trial '+(trials.length-1)+': '+first+' m. Trial '+trials.length+': '+second+' m. '+[travelled,inputs,interpretation].filter(Boolean).join(' ');
+}
 function evidenceRows(activity, record) {
   const o = findOutcome(activity);
   return [['Activity',activity.title],['Learning outcome (platform paraphrase)',curriculumText(o)],['Learning level',record.level],
@@ -164,7 +174,8 @@ function evidenceRows(activity, record) {
       return row[0]+' — '+row[2];
     }).join('\n')],['Interpreter questions',record.questions.join('\n')],['Model assumptions',labs[activity.id]?.notes || 'Scene and character dialogue are educational interpretations.'],
     ['Teacher judgement',record.review?.judgement || 'Awaiting teacher review'],['Proposed rubric',record.review?.scores?.map((score,i)=>rubric[i]+': '+score).join('\n')],
-    ['Teacher feedback / next steps',record.review?.feedback],['Suggested next step','Compare your conclusion with another trial or source and explain what would strengthen it.']];
+    ['Teacher feedback / next steps',record.review?.feedback],['Suggested next step','Compare your conclusion with another trial or source and explain what would strengthen it.'],
+    ...(activity.id==='forces' && record.trials.length>1 ? [['Latest trial comparison',forceComparison(record.trials)]] : [])];
 }
 const newDraft = a => ({
   learner:'',prediction:'',observations:'',explanation:'',reflection:'',
@@ -182,18 +193,22 @@ function investigation(a, params) {
   if (Object.hasOwn(levels,params.get('level'))) d.level = params.get('level');
   const lab = labs[a.id];
   const dossier = history[a.id];
+  const forces = a.id === 'forces';
   const mdina = a.id === 'mdina';
   const o = findOutcome(a);
   const title = reportNames[a.group];
   main.innerHTML = '<p class="crumb"><a href="#'+a.group+'">'+groups[a.group].title+'</a></p>'+
     intro(a.title,a.question,a.task)+
-    '<div class="layout investigate"><section class="stack"><div class="panel visual"><div class="scene-stage"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas>'+(mdina ? '<button type="button" class="scene-object" id="mdina-object">Inspect town gate</button>' : '')+'</div><div class="scene-controls">'+(lab ? '<button data-run>'+ (a.id==='forces' ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">'+(mdina ? 'Previous stop' : 'Look left')+'</button><button class="secondary" data-view="1">'+(mdina ? 'Next stop' : 'Look right')+'</button>')+'</div>'+
+    '<div class="layout investigate"><section class="stack">'+
+    (forces ? '<section class="panel"><h2>Make a prediction</h2><label>Predict what will happen and why.<textarea id="force-prediction" name="prediction" form="notebook" rows="2" maxlength="3000" required>'+esc(d.prediction)+'</textarea></label></section>' : '')+
+    '<div class="panel visual"><div class="scene-stage"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas>'+(mdina ? '<button type="button" class="scene-object" id="mdina-object">Inspect town gate</button>' : '')+'</div><div class="scene-controls">'+(lab ? '<button data-run>'+ (forces ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">'+(mdina ? 'Previous stop' : 'Look left')+'</button><button class="secondary" data-view="1">'+(mdina ? 'Next stop' : 'Look right')+'</button>')+'</div>'+
+    (forces ? '<div class="surface-controls"><p>Test friction while keeping the other settings fixed.</p><div class="actions"><button type="button" class="secondary" data-friction=".15" aria-pressed="false">Smoother surface</button><button type="button" class="secondary" data-friction=".5" aria-pressed="false">Rougher surface</button></div></div>' : '')+
     (mdina ? '<div class="tour-notes"><h2 id="mdina-stop"></h2><p id="mdina-description"></p><p id="mdina-compare" class="muted"></p><p class="muted">Use the buttons or focus the scene and press the left or right arrow key.</p></div>' : '')+'</div>'+
     (lab ? '<div class="panel"><div class="section-head"><h2>Model results</h2><span class="muted" id="budget"></span></div><div id="metrics" class="metrics"></div><details><summary>Read model assumptions</summary><p>'+esc(lab.notes)+'</p></details></div><section class="panel"><h2>Recorded trials</h2><div id="trials"></div></section>' : '<div class="panel"><p class="eyebrow">'+esc(dossier.place)+'</p><h2>Evidence desk</h2><div id="sources"></div><h3>Ask the '+esc(dossier.character.toLowerCase())+'</h3><p class="muted">Scripted fictional interpretation</p><div class="actions">'+['Tell me about your work','What should I compare?','What is uncertain?'].map((q,i)=>'<button class="secondary" data-question="'+i+'">'+q+'</button>').join('')+'</div><p id="reply" aria-live="polite"></p></div>')+
     (a.id==='flood' ? '<section class="panel"><h2>'+esc(floodCase[0])+'</h2><p>'+esc(floodCase[1])+'</p><p>'+link(floodCase[2],'Read the national flood risk assessment')+'</p><button class="secondary" data-source="0">Mark case study examined</button></section>' : '')+
     '</section><aside class="stack"><section class="panel"><h2>Mission brief</h2><p class="eyebrow">Learning outcome</p><p>'+esc(o.summary)+'</p><p class="muted">'+esc(o.status)+'</p>'+(o.source?'<p>'+link(o.source,o.code+' · official source')+'</p>':'')+'<label>Learning level<select id="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><p id="guidance"></p><details><summary>Get a hint</summary><p>'+esc(a.group==='history' ? 'Ask what survives today. Which part of your claim follows directly from that source?' : 'Compare two trials. What stayed the same, and what changed?')+'</p></details></section>'+
     (lab?'<section class="panel"><h2>Change the variables</h2><form id="variables">'+lab.controls.map(control=>inputSettings(control,d.values)).join('')+'</form></section>':'')+'</aside></div>'+
-    '<section class="panel notebook"><div class="section-head"><h2>Investigation notebook</h2><span class="muted">Saved in this browser</span></div><form id="notebook"><label>Anonymous learner ID <small>(optional)</small><input name="learner" maxlength="32" placeholder="e.g. Learner 07" value="'+esc(d.learner)+'"></label><div class="notebook-fields">'+fields[a.group].map(([key,label])=>'<label>'+esc(label)+'<textarea name="'+key+'" rows="3" maxlength="3000" required>'+esc(d[key])+'</textarea></label>').join('')+'</div><div class="actions"><button>Submit for local review</button><button type="button" class="secondary" data-export>Download '+esc(title)+'</button></div></form></section>';
+    '<section class="panel notebook"><div class="section-head"><h2>Investigation notebook</h2><span class="muted">Saved in this browser</span></div><form id="notebook"><label>Anonymous learner ID <small>(optional)</small><input name="learner" maxlength="32" placeholder="e.g. Learner 07" value="'+esc(d.learner)+'"></label><div class="notebook-fields">'+fields[a.group].filter(([key])=>!forces || key!=='prediction').map(([key,label])=>'<label>'+esc(label)+'<textarea name="'+key+'" rows="3" maxlength="3000" required>'+esc(d[key])+'</textarea></label>').join('')+'</div><div class="actions"><button>Submit for local review</button><button type="button" class="secondary" data-export>Download '+esc(title)+'</button></div></form></section>';
   const canvas = main.querySelector('#simulation');
   const level = main.querySelector('#level');
   const guide = main.querySelector('#guidance');
@@ -222,9 +237,11 @@ function investigation(a, params) {
   level.onchange = () => { d.level = level.value; guide.textContent = levels[d.level]; save(); };
   if (lab) {
     const variables = main.querySelector('#variables');
-    function readResults() {
+    function readResults(reveal = !forces) {
       results = lab.run(d.values);
-      main.querySelector('#metrics').innerHTML = results.map(([k,v,u])=>'<div><strong>'+esc(v)+(u?' <small>'+esc(u)+'</small>':'')+'</strong><span>'+esc(k)+'</span></div>').join('');
+      main.querySelector('#metrics').innerHTML = reveal
+        ? results.map(([k,v,u])=>'<div><strong>'+esc(v)+(u?' <small>'+esc(u)+'</small>':'')+'</strong><span>'+esc(k)+'</span></div>').join('')
+        : '<p class="muted">Release the cart to see the results for these settings.</p>';
       if (['flood','urban'].includes(a.id)) {
         const cost = results.find(([k])=>k==='Cost')[1];
         const node = main.querySelector('#budget');
@@ -232,12 +249,14 @@ function investigation(a, params) {
         node.classList.toggle('over',cost>budget);
       }
     }
+    const surfaceButtons = main.querySelectorAll('[data-friction]');
     function syncControls() {
       for (const [key] of lab.controls) {
         const control = variables.elements[key];
         control.value = d.values[key];
         if (control.type==='range') control.nextElementSibling.value = control.value;
       }
+      surfaceButtons.forEach(button => button.setAttribute('aria-pressed',String(Number(button.dataset.friction)===d.values.friction)));
     }
     function stop() { cancelAnimationFrame(frame); active = false; lastTime=0; }
     function live() {
@@ -257,13 +276,14 @@ function investigation(a, params) {
       const area = main.querySelector('#trials');
       if (!d.trials.length) { area.innerHTML = '<p class="muted">Run a trial to record its controls and results.</p>'; return; }
       const last = d.trials.at(-1);
+      const comparison = forces && d.trials.length>1 ? '<div class="trial-comparison"><h3>Latest trial comparison</h3><p>'+esc(forceComparison(d.trials))+'</p></div>' : '';
       const comparable = last.results.find(([key])=>key==='Distance at 2 s') || last.results.find(row=>typeof row[1]==='number');
       const chart = comparable && d.trials.length>1 ? '<div class="chart" aria-label="'+esc(comparable[0])+' comparison"><strong>'+esc(comparable[0])+'</strong>'+d.trials.map((trial,i)=>{
         const metric = trial.results.find(([key])=>key===comparable[0]);
         const maximum = Math.max(1,...d.trials.map(item=>Math.abs(Number(item.results.find(([key])=>key===comparable[0])?.[1])||0)));
         return '<div><span>Trial '+(i+1)+'</span><meter min="0" max="'+maximum+'" value="'+Math.abs(Number(metric?.[1])||0)+'"></meter><span>'+esc(metric?.[1])+' '+esc(metric?.[2])+'</span></div>';
       }).join('')+'</div>' : '';
-      area.innerHTML = chart+d.trials.map((t,i)=>'<details><summary>Trial '+(i+1)+'</summary><p>'+Object.entries(t.inputs).map(([k,v])=>esc(k)+': '+esc(v)).join(' · ')+'</p><p class="lines">'+esc(metricText(t.results))+'</p></details>').join('')+'<button class="secondary" data-undo>Remove last trial</button>';
+      area.innerHTML = comparison+chart+d.trials.map((t,i)=>'<details><summary>Trial '+(i+1)+'</summary><p>'+Object.entries(t.inputs).map(([k,v])=>esc(k)+': '+esc(v)).join(' · ')+'</p><p class="lines">'+esc(metricText(t.results))+'</p></details>').join('')+'<button class="secondary" data-undo>Remove last trial</button>';
       area.querySelector('[data-undo]').onclick = () => { d.trials.pop(); trials(); save(); announce('Last trial removed.'); };
     }
     variables.oninput = ({target}) => {
@@ -271,13 +291,18 @@ function investigation(a, params) {
       d.values[target.name] = Number(target.value);
       syncControls(); live(); save();
     };
+    surfaceButtons.forEach(button => button.onclick = () => {
+      d.values.friction = Number(button.dataset.friction);
+      syncControls(); live(); save();
+      announce(button.textContent+' selected. Other settings are unchanged.');
+    });
     main.querySelector('[data-reset]').onclick = () => { d.values=defaults(a.id); syncControls(); live(); save(); announce('Starting controls restored.'); };
     main.querySelector('[data-run]').onclick = () => {
-      readResults();
       if (d.trials.length>=20) { announce('The notebook holds 20 trials. Remove the last trial to record another.'); return; }
+      readResults(true);
       d.trials.push({inputs:displayInputs(a.id,d.values),results:structuredClone(results)});
       trials(); save(); announce('Trial '+d.trials.length+' recorded.');
-      if (a.id!=='forces') return;
+      if (!forces) return;
       stop();
       active=true;
       if (reduced()) { lastTime=1; draw(); return; }
@@ -338,7 +363,9 @@ function investigation(a, params) {
     update();
   });
   const notebook = main.querySelector('#notebook');
-  notebook.oninput = ({target}) => { d[target.name]=target.value; save(); };
+  const saveResponse = ({target}) => { d[target.name]=target.value; save(); };
+  notebook.oninput = saveResponse;
+  if (forces) main.querySelector('#force-prediction').oninput = saveResponse;
   notebook.querySelector('[data-export]').onclick = () => exportEvidence(a,d);
   notebook.onsubmit = event => {
     event.preventDefault();
@@ -430,6 +457,18 @@ function library() {
   });
 }
 function goDemo(index) {
+  if (index === 4) {
+    const draft = state.drafts.forces;
+    const previous = state.submissions.find(s=>s.id==='demo-live-cart');
+    state.submissions = state.submissions.filter(s=>s.id!=='demo-live-cart');
+    if (draft.trials.length) {
+      const evidence = {...draft, learner:'Demo group · live investigation'};
+      const unchanged = previous && Object.entries(evidence).every(([key,value])=>JSON.stringify(value)===JSON.stringify(previous[key]));
+      state.submissions.unshift(unchanged ? previous : {
+        ...structuredClone(evidence), id:'demo-live-cart', activity:'forces', submitted:new Date().toISOString()
+      });
+    }
+  }
   demo=index;
   const hash='#'+steps[index][0];
   if (location.hash===hash) render(false);

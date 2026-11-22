@@ -1,4 +1,13 @@
 const round = value => Math.round(value * 100) / 100;
+export function compareForceTrials(before, after) {
+  const first = before.results.find(([name]) => name === 'Distance at 2 s')[1];
+  const second = after.results.find(([name]) => name === 'Distance at 2 s')[1];
+  const changed = Object.entries(after.inputs)
+    .filter(([name, value]) => before.inputs[name] !== value)
+    .map(([name, value]) => [name, before.inputs[name], value]);
+  return { first, second, difference: round(second - first), changed };
+}
+
 export const budget = 1000;
 export const sites = [
   ['Harbour road', 0.3, 10], ['Ferry terminal', 0.6, 8], ['Seafront shops', 1, 21],
@@ -9,7 +18,7 @@ export const sites = [
 export const labs = {
   forces: {
     controls: [['mass','Object mass (kg)',1,10,1,3],['gravity','Gravity (m/s²)',1,20,.1,9.8],['friction','Friction coefficient',0,.8,.05,.15],['push','Down-ramp force (N)',0,40,1,12],['angle','Ramp angle (°)',0,40,1,12]],
-    notes: 'A sliding block starts from rest. Static and kinetic friction use the same coefficient. The track is assumed long enough for a two-second trial.',
+    notes: 'The cart represents a sliding block starting from rest. Static and kinetic friction use the same coefficient. The track is schematic and is assumed long enough for a two-second trial.',
     run: ({ mass, gravity, friction, push, angle }) => {
       const radians = angle * Math.PI / 180;
       const drive = push + mass * gravity * Math.sin(radians);

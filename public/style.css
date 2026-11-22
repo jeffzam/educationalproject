@@ -85,6 +85,9 @@ p + p { margin-top: .5rem; }
 .scene-object[data-stop="0"] { left:45%; }
 .scene-object[data-stop="2"] { left:62%; }
 .scene-controls { display:flex; gap:.65rem; flex-wrap:wrap; padding:.9rem; }
+.surface-controls { padding:0 .9rem .9rem; }
+.surface-controls button[aria-pressed=true] { border-color:var(--accent); color:var(--accent); }
+.trial-comparison { padding:.85rem; background:#1b2b45; border-radius:.6rem; margin-bottom:1rem; }
 .tour-notes { padding:0 .9rem 1rem; }
 .tour-notes h2 { font-size:1.15rem; }
 @keyframes portal { 0% { opacity:.38; filter:brightness(1.65) saturate(.4); } 100% { opacity:1; filter:none; } }
@@ -103,6 +106,7 @@ output { color:var(--accent); font-variant-numeric:tabular-nums; text-align:righ
 .metrics div { display:grid; align-content:start; border-radius:.55rem; background:#1b2b45; padding:.65rem; }
 .metrics strong { color:var(--accent); font-size:1.13rem; }
 .metrics span { color:var(--muted); font-size:.9rem; }
+.metrics > p { grid-column:1 / -1; }
 details { border-top:1px solid var(--line); padding-block:.55rem; }
 summary { color:var(--accent); cursor:pointer; font-weight:650; }
 details p { margin:.4rem 0; }
