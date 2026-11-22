@@ -8,6 +8,9 @@ const science = 'https://primaryscience.skola.edu.mt/wp-content/uploads/2026/10/
 const history7 = 'https://curriculum.gov.mt/wp-content/uploads/2024/04/History_Yr07_Learning-and-Assessment-Programme_2020.pdf';
 const history8 = 'https://curriculum.gov.mt/wp-content/uploads/2024/04/History_Yr08_Learning-and-Assessment-Programme_2020.pdf';
 const geography = 'https://curriculum.gov.mt/wp-content/uploads/2024/04/Geography_syllabus_Year-8-general-2021-2022.pdf';
+const science7 = 'https://curriculum.gov.mt/wp-content/uploads/2025/05/syllabus_science_yr07_may_2025.pdf';
+const geography9 = 'https://curriculum.gov.mt/wp-content/uploads/2025/10/syllabus_geography_yr09_general_2025-2026.pdf';
+const social6 = 'https://curriculum.gov.mt/wp-content/uploads/2024/04/Social_Studies-yr06-LOs-2023.pdf';
 const verified = 'Verified in linked official document';
 const pending = 'Proposed activity objective · official mapping pending';
 
@@ -16,10 +19,13 @@ export const outcomes = [
   { id: 'energy', stage: 'Primary', year: 5, subject: 'Primary Science', strand: 'What is energy?', code: '5.5.2', summary: 'Demonstrate and give examples of electrical energy transforming into light, sound, heat and movement.', source: science + '#page=5', document: 'Year 5 Primary Science Learning Outcomes', version: 'October 2026', status: verified },
   { id: 'habitat', stage: 'Primary', year: 5, subject: 'Primary Science', strand: 'How does planet Earth support life?', code: '5.7.4', summary: 'Investigate human impacts on habitats and the organisms living in them.', source: science + '#page=7', document: 'Year 5 Primary Science Learning Outcomes', version: 'October 2026', status: verified },
   { id: 'space', stage: 'Primary', year: 5, subject: 'Primary Science', strand: 'What is there out in Space?', code: '5.9.1', summary: 'Use a drawing or model to explain why Earth has day and night.', source: science + '#page=9', document: 'Year 5 Primary Science Learning Outcomes', version: 'October 2026', status: verified },
+  { id: 'heritage', stage: 'Primary', year: 6, subject: 'Social Studies', strand: 'Living Together', code: 'Ċ6.1.1', summary: 'Identify features of Maltese cultural heritage.', source: social6 + '#page=3', document: 'Year 6 Social Studies Learning Outcomes', version: 'From September 2023 · linked by the Department', status: verified, enquiry: 'Identify two surviving features of a Roman home in Malta. From the evidence desk, explain what each feature can tell visitors about cultural heritage.', criterion: 'Name two artefacts or surviving features and describe why they help us understand Malta’s heritage.' },
+  { id: 'particle-model', stage: 'Secondary', year: 7, subject: 'Science', strand: 'Understanding Matter', code: 'SCI LOF 7.4 · item 14', summary: 'Apply the particle model to describe a change of state.', source: science7 + '#page=26', document: 'Year 7 Science Learning and Assessment Programme', version: 'May 2025', status: verified, enquiry: 'Record observations below freezing, at room temperature and above boiling. Use changes in particle arrangement and motion to explain what happened when heating or cooling water.', criterion: 'Use particle arrangement and movement to explain at least one change of state.' },
   { id: 'roman', stage: 'Secondary', year: 7, subject: 'History General', strand: 'Interpretation and source analysis', code: 'HIS 7.4 · objective 3, item 9', summary: 'Draw inferences about Roman sites and life in Malta from different sources, including the Domvs Romana.', source: history7 + '#page=24', document: 'Year 7 History Learning and Assessment Programme', version: '2020 · linked by the Department', status: verified },
   { id: 'mdina', stage: 'Secondary', year: 8, subject: 'History General', strand: 'Historical empathy', code: 'HIS 8.3 · objective 3, item 4 (D7.6, D7.7)', summary: 'Reconstruct a day in the life of a person in a fortified settlement in Late Medieval Malta.', source: history8 + '#page=19', document: 'Year 8 History Learning and Assessment Programme', version: '2020 · linked by the Department', status: verified },
   { id: 'knights', stage: 'Secondary', year: 8, subject: 'History General', strand: 'Chronology and sequence', code: 'HIS 8.5 · objective 3, item 2 (A7.5, A7.8)', summary: 'Sequence key events between the loss of Rhodes in 1523 as stated in the syllabus and the Knights’ formal entry into Mdina in 1530. Consult the source for its periodisation.', source: history8 + '#page=26', document: 'Year 8 History Learning and Assessment Programme', version: '2020 · linked by the Department', status: verified },
   { id: 'flood', stage: 'Secondary', year: 8, subject: 'Geography General', strand: 'Natural hazards', code: '8.3', summary: 'Research a case study to describe the characteristics and effects of a natural disaster, such as flooding.', source: geography + '#page=13', document: 'Year 8 Geography General Syllabus', version: '2021–2022 · linked by the Department', status: verified },
+  { id: 'water-conservation', stage: 'Secondary', year: 9, subject: 'Geography General', strand: 'Water resources', code: '3.2h', summary: 'Explain why conserving water matters in Malta’s semi-arid climate.', source: geography9 + '#page=14', document: 'Year 9 Geography General Syllabus', version: '2025–2026 · linked by the Department', status: verified, enquiry: 'Read the Malta water context. Keep rainfall and demand fixed, then compare how conservation and a supply intervention affect a dry month. Use the results to explain one reason to conserve water in Malta.', criterion: 'Use two model outcomes and one detail from the Malta context to explain the value of water conservation.' },
   ...[
     ['water', 'Water resources', 'Compare the effects of water conservation and additional supply.'],
     ['solar', 'Energy resources', 'Evaluate the costs and benefits of meeting demand with solar energy and storage.'],
@@ -37,10 +43,17 @@ export const activities = [
   ['mdina','history','Medieval Mdina','mdina','What might a working day inside medieval Mdina have been like?','Visit the gate, market stall and workshop in both eras. Record three differences, support two claims with sources and explain one change over time.'],
   ['knights','history','Malta Under the Knights','knights','How did the Knights’ move to Malta change the role of harbour settlements?','Use the timeline and harbour source to connect an event with a consequence.'],
   ['flood','future','Coastal Flooding','flood','Save a Maltese Coastal Town','Record a baseline, add protection within €1 million and justify your plan. Pair your model evidence with the real flood case study.'],
-  ['water','future','Water Management','water','Can the town meet a month of water demand after a dry spell?','Compare a supply intervention with conservation or leakage repairs.'],
+  ['water','future','Water Management','water-conservation','Can the town meet a month of water demand after a dry spell?','Compare a supply intervention with conservation or leakage repairs.'],
   ['solar','future','Sustainable Energy','solar','How much demand can the town meet with solar and storage?','Measure the baseline. Compare more panels against improved efficiency and storage.'],
   ['urban','future','Sustainable Urban Planning','urban','How can the town reduce heat and runoff while keeping people connected?','Try two designs within budget and explain who benefits from each.']
 ].map(([id, group, title, outcome, question, task]) => ({ id, group, title, outcome, question, task }));
+
+const alternateOutcomes = { matter:['particle-model'], roman:['heritage'], water:['water'] };
+export const activityOutcomeIds = activity => [activity.outcome, ...(alternateOutcomes[activity.id] || [])];
+export function resolveOutcome(activity, requested) {
+  const selected = activityOutcomeIds(activity).includes(requested) ? requested : activity.outcome;
+  return outcomes.find(outcome=>outcome.id===selected);
+}
 
 export const history = {
   roman: {
@@ -94,6 +107,7 @@ export const mdinaStops = [
   }
 ];
 export const floodCase = ['Real case study: Malta’s September 2003 floods', 'The national assessment records rainfall flooding on 15 September 2003. It lists Qormi, Msida, Birkirkara, Burmarrad, Siġġiewi and Marsa, and reports disruption to traffic and damage to private property. Use the report to compare how rainfall flooding and coastal flooding affect people and infrastructure.', 'https://www.energywateragency.gov.mt/wp-content/uploads/2017/12/Preliminary-Flood-Risk-Assessment-Final-Report.pdf'];
+export const waterCase = ['Real context: Water in Malta', 'Malta has a semi-arid climate and limited natural freshwater. The Energy and Water Agency describes demand management alongside rainwater harvesting, desalination and water reuse. Compare that context with the assumptions and interventions in the fictional town model.', 'https://energywateragency.gov.mt/water/'];
 export const levels = {
   Support: 'Use two examples and this frame: I changed or inspected __. I noticed __. This suggests __.',
   Core: 'Compare two pieces of evidence and use them to explain your conclusion.',

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { activities, outcomes, history, mdinaStops } from '../src/content.js';
+import { activities, activityOutcomeIds, resolveOutcome, outcomes, history, mdinaStops } from '../src/content.js';
 import { labs, compareForceTrials, defaults, displayInputs } from '../src/models.js';
 import { circuitResults, connectWire, parallelWires, seriesWires, solveCircuit } from '../src/circuit.js';
 import { knightsAnswer, knightsEvents, missionEvidence, moveTimeline, romanClaims } from '../src/history-missions.js';
@@ -9,15 +9,24 @@ test('every activity has a unique ID, curriculum record and one experience', () 
   assert.equal(activities.length, 12);
   assert.equal(new Set(activities.map(a => a.id)).size, 12);
   for (const activity of activities) {
-    assert.ok(outcomes.find(outcome=>outcome.id===activity.outcome));
+    assert.ok(activityOutcomeIds(activity).every(id=>outcomes.some(outcome=>outcome.id===id)));
     assert.notEqual(Boolean(labs[activity.id]), Boolean(history[activity.id]));
   }
   for (const outcome of outcomes) {
+    assert.ok(activities.some(a=>activityOutcomeIds(a).includes(outcome.id)));
     if (outcome.status.startsWith('Verified')) {
       assert.ok(outcome.code);
       assert.match(outcome.source, /^https:\/\/(curriculum\.gov\.mt|primaryscience\.skola\.edu\.mt)\/.*#page=\d+$/);
     } else assert.equal(outcome.code, undefined);
   }
+});
+test('activities only accept their assigned alternate curriculum outcomes', () => {
+  const find=id=>activities.find(activity=>activity.id===id);
+  assert.equal(resolveOutcome(find('matter'),'particle-model').code,'SCI LOF 7.4 · item 14');
+  assert.equal(resolveOutcome(find('roman'),'heritage').code,'Ċ6.1.1');
+  assert.equal(resolveOutcome(find('roman'),'particle-model').id,'roman');
+  assert.equal(resolveOutcome(find('water')).code,'3.2h');
+  assert.equal(resolveOutcome(find('water'),'water').source,undefined);
 });
 test('each Mdina stop points to distinct evidence and supports comparison across eras', () => {
   assert.equal(mdinaStops.length, history.mdina.sources.length);

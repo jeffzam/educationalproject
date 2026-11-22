@@ -2,6 +2,12 @@
 
 **Release status: in development.**
 
+## Cross-subject curriculum assignments · 22 November 2026
+
+The planner now supports multiple outcome mappings for the same activity. Assignment links carry the selected outcome through the student mission, submission, review and exports. Three verified mappings add Year 6 Social Studies for Roman Malta, Year 7 Science for States of Matter, and Year 9 Geography for Water Management. The Water Management lesson also includes a source from Malta’s Energy and Water Agency. Earlier water submissions retain the proposed outcome under which they were recorded.
+
+The build and 21 automated tests passed. Browser checks verified the Year 9 filter, lesson and assignment link, water case recording, submission and teacher report, and both alternate outcome links.
+
 ## Time Portal history missions · 22 November 2026
 
 Roman Malta now asks students to test claims against the scope of the archaeological evidence. Medieval Mdina records comparisons at all three stops. Malta Under the Knights adds a keyboard-operable timeline with feedback and links to the curriculum, Heritage Malta and the Order’s own historical account. Student choices and notes are included in teacher review and exports.
@@ -50,10 +56,10 @@ The first working local release includes twelve investigations: five science mod
 ## Remaining work
 
 - Add a richer 3D presentation and accessible interaction layer. Current scenes are illustrated Canvas 2D with scripted animations. Mdina has a three-stop perspective tour and interactive evidence. Continuous camera movement and richer reconstruction detail remain open.
-- Extend curriculum mapping and confirm school adoption of older documents for 2026–27. Add subject-level mappings for Social Studies and lower-secondary Science, and broader coverage for Geography and Environmental Studies.
+- Extend curriculum mapping for Energy and Urban Planning and confirm school adoption of older documents for 2026–27.
 - Extend the historical missions with further source types and qualified perspectives. Historical characters use scripted questions.
 - Add an optional provider-backed tutor and aggregate misconception reporting if needed for a later release. The current package uses contextual scripted hints and individual teacher feedback.
 - Extend English text extraction for future Maltese translation, browser acceptance automation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority: extend verified curriculum mapping and activity guidance for Malta 2050.
+Next implementation priority: strengthen classroom accessibility and repeatable browser acceptance checks.

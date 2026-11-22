@@ -8,10 +8,13 @@ Reviewed 22 November 2026. A verified record means that the identifier and meani
 | Primary Year 5 Science | 5.5.2, October 2026, p. 5 | Electricity. Use observed bulb power and light as examples of energy transformation. The lesson addresses the bulb example within a wider outcome. |
 | Primary Year 5 Science | 5.7.4, October 2026, p. 7 | Ecosystem Explorer. Use habitat-loss comparisons to reason about impacts on organisms. |
 | Primary Year 5 Science | 5.9.1, October 2026, p. 9 | Space and Earth. Use the globe to show why Malta moves between day and night. Seasonal comparisons and Moon phases extend the lesson. |
+| Primary Year 6 Social Studies | Ċ6.1.1, from September 2023, p. 3 | Roman Malta alternate assignment. Identify surviving features of a Roman home as one part of Malta’s cultural heritage. |
+| Secondary Year 7 Science | SCI LOF 7.4, item 14, May 2025, p. 26 | States of Matter alternate assignment. Explain a change of state using particle arrangement and motion. The existing Year 5 prediction assignment remains available. |
 | Secondary Year 7 History General | HIS 7.4, teaching objective 3, item 9, PDF p. 24 | Roman Malta. Support an inference from the Domvs Romana and compare it with another source. |
 | Secondary Year 8 History General | HIS 8.3, teaching objective 3, item 4, D7.6 and D7.7, PDF p. 19 | Medieval Mdina. Reconstruct a plausible day and identify uncertainties. |
 | Secondary Year 8 History General | HIS 8.5, teaching objective 3, item 2, A7.5 and A7.8, PDF p. 26 | Malta Under the Knights. Use the source dossier to sequence key events and discuss consequences. |
 | Secondary Year 8 Geography General | 8.3, PDF p. 13 | Coastal Flooding. Assess characteristics and effects through the historical case study. The fictional scenario provides comparison and planning practice. |
+| Secondary Year 9 Geography General | 3.2h, 2025–2026, PDF p. 14 | Water Management. Compare simulated conservation and supply interventions and relate the results to Malta’s semi-arid climate. |
 
 ## Official documents
 
@@ -23,9 +26,12 @@ Reviewed 22 November 2026. A verified record means that the identifier and meani
 - [Year 7 History General programme, 2020](https://curriculum.gov.mt/wp-content/uploads/2024/04/History_Yr07_Learning-and-Assessment-Programme_2020.pdf)
 - [Year 8 History General programme, 2020](https://curriculum.gov.mt/wp-content/uploads/2024/04/History_Yr08_Learning-and-Assessment-Programme_2020.pdf)
 - [Year 8 Geography General syllabus, 2021–2022](https://curriculum.gov.mt/wp-content/uploads/2024/04/Geography_syllabus_Year-8-general-2021-2022.pdf)
+- [Year 9 Geography General syllabus, 2025–2026](https://curriculum.gov.mt/wp-content/uploads/2025/10/syllabus_geography_yr09_general_2025-2026.pdf#page=14)
+- [Year 7 Science Learning and Assessment Programme, May 2025](https://curriculum.gov.mt/wp-content/uploads/2025/05/syllabus_science_yr07_may_2025.pdf#page=26)
+- [Year 6 Social Studies Learning Outcomes, from September 2023](https://curriculum.gov.mt/wp-content/uploads/2024/04/Social_Studies-yr06-LOs-2023.pdf#page=3)
 - [Year 9–11 subject syllabi](https://curriculum.gov.mt/syllabi-years-9-10-11-new/)
 - [Malta's Preliminary Flood Risk Assessment, 2013](https://www.energywateragency.gov.mt/wp-content/uploads/2017/12/Preliminary-Flood-Risk-Assessment-Final-Report.pdf)
 
-Water Management, Sustainable Energy and Sustainable Urban Planning use proposed objectives. Social Studies, secondary Science and broader environmental education need further outcome-level review. The portal links above are starting points for that review.
+Sustainable Energy and Sustainable Urban Planning use proposed objectives. The original proposed Water Management objective remains available, including for submissions saved before the new Year 9 mapping. Broader outcome coverage and confirmation of school adoption for 2026–27 remain open.
 
 Historical objects and claims link to dossiers and Heritage Malta records through each activity. Illustrated scenes, characters and conversations are educational reconstructions.

@@ -1,4 +1,4 @@
-import { activities, groups, outcomes, history, levels, rubric, floodCase, mdinaStops } from './content.js';
+import { activities, activityOutcomeIds, resolveOutcome, groups, outcomes, history, levels, rubric, floodCase, waterCase, mdinaStops } from './content.js';
 import { labs, budget, compareForceTrials, defaults, displayInputs } from './models.js';
 import { scene } from './scenes.js';
 import { circuitNotes, circuitResults, connectWire, parallelWires, seriesWires, terminals } from './circuit.js';
@@ -61,10 +61,11 @@ syncMotion();
 
 const escapeTable = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
 const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => escapeTable[ch]);
-const findOutcome = activity => outcomes.find(outcome => outcome.id === activity.outcome);
+const recordOutcome = (activity,record) => resolveOutcome(activity,record.outcomeId || (activity.id==='water' ? 'water' : undefined));
+const caseStudyFor = id => id==='flood' ? floodCase : id==='water' ? waterCase : undefined;
 const link = (url, label) => '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + '</a>';
 const path = activity => activity.group + '/' + activity.id;
-const activityLink = (activity, label = activity.title) => '<a href="#' + path(activity) + '">' + esc(label) + '</a>';
+const activityLink = (activity, label = activity.title, outcomeId) => '<a href="#'+path(activity)+(outcomeId ? '?outcome='+encodeURIComponent(outcomeId) : '')+'">'+esc(label)+'</a>';
 const intro = (eyebrow,title,description) => '<section class="intro"><p class="eyebrow">'+esc(eyebrow)+'</p><h1>'+esc(title)+'</h1><p class="lede">'+esc(description)+'</p></section>';
 const option = (value, label = value) => '<option value="'+esc(value)+'">'+esc(label)+'</option>';
 
@@ -86,19 +87,19 @@ function catalog(groupId) {
   drawPreviews();
 }
 function outcomeCard(outcome) {
-  const items = activities.filter(a=>a.outcome===outcome.id);
-  return '<article class="panel outcome"><p class="eyebrow">'+outcome.stage+' · Year '+outcome.year+' · '+esc(outcome.subject)+'</p><h3>'+esc(outcome.code || outcome.strand)+'</h3><p>'+esc(outcome.summary)+'</p><p class="muted">Platform paraphrase · '+esc(outcome.strand)+'</p><p>'+esc(outcome.status)+'</p>'+(outcome.source ? '<p>'+link(outcome.source,outcome.document)+'<br><small>'+esc(outcome.version)+'</small></p>' : '')+'<p class="actions">'+items.map(a=>activityLink(a)).join('')+'</p></article>';
+  const items = activities.filter(a=>activityOutcomeIds(a).includes(outcome.id));
+  return '<article class="panel outcome"><p class="eyebrow">'+outcome.stage+' · Year '+outcome.year+' · '+esc(outcome.subject)+'</p><h3>'+esc(outcome.code || outcome.strand)+'</h3><p>'+esc(outcome.summary)+'</p><p class="muted">Platform paraphrase · '+esc(outcome.strand)+'</p><p>'+esc(outcome.status)+'</p>'+(outcome.source ? '<p>'+link(outcome.source,outcome.document)+'<br><small>'+esc(outcome.version)+'</small></p>' : '')+'<p class="actions">'+items.map(a=>activityLink(a,a.title,outcome.id)).join('')+'</p></article>';
 }
 
 function outcomePage(params) {
   main.innerHTML = intro('Curriculum','Learning Outcomes Engine','Find an outcome, match it to an activity and build a differentiated lesson.')+
-  '<form class="panel filters" id="filters"><label>Search outcome, code or strand<input type="search" name="query"></label><label>Stage<select name="stage">'+option('','All stages')+option('Primary')+option('Secondary')+'</select></label><label>Year group<select name="year">'+option('','All years')+[5,7,8].map(y=>option(y,'Year '+y)).join('')+'</select></label><label>Subject<select name="subject">'+option('','All subjects')+[...new Set(outcomes.map(o=>o.subject))].map(s=>option(s)).join('')+'</select></label><label>Strand<select name="strand">'+option('','All strands')+[...new Set(outcomes.map(o=>o.strand))].map(s=>option(s)).join('')+'</select></label><label>Verification<select name="verification">'+option('','All records')+option('verified','Verified sources')+option('pending','Proposed objectives')+'</select></label></form><div class="layout"><div id="matches" class="stack"></div><aside class="panel"><h2>Plan a lesson</h2><form id="planner" class="stack"><label>Outcome<select name="outcome" required></select></label><label>Activity<select name="activity" required></select></label><label>Learning level<select name="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><label>Duration<select name="duration">'+[20,30,40,60].map(m=>option(m,m+' minutes')).join('')+'</select></label><button>Generate lesson plan</button></form></aside></div><section id="lesson" class="stack"></section>';
+  '<form class="panel filters" id="filters"><label>Search outcome, code or strand<input type="search" name="query"></label><label>Stage<select name="stage">'+option('','All stages')+option('Primary')+option('Secondary')+'</select></label><label>Year group<select name="year">'+option('','All years')+[...new Set(outcomes.map(o=>o.year))].sort((a,b)=>a-b).map(y=>option(y,'Year '+y)).join('')+'</select></label><label>Subject<select name="subject">'+option('','All subjects')+[...new Set(outcomes.map(o=>o.subject))].map(s=>option(s)).join('')+'</select></label><label>Strand<select name="strand">'+option('','All strands')+[...new Set(outcomes.map(o=>o.strand))].map(s=>option(s)).join('')+'</select></label><label>Verification<select name="verification">'+option('','All records')+option('verified','Verified sources')+option('pending','Proposed objectives')+'</select></label></form><div class="layout"><div id="matches" class="stack"></div><aside class="panel"><h2>Plan a lesson</h2><form id="planner" class="stack"><label>Outcome<select name="outcome" required></select></label><label>Activity<select name="activity" required></select></label><label>Learning level<select name="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><label>Duration<select name="duration">'+[20,30,40,60].map(m=>option(m,m+' minutes')).join('')+'</select></label><button>Generate lesson plan</button></form></aside></div><section id="lesson" class="stack"></section>';
   const filters = main.querySelector('#filters');
   const planner = main.querySelector('#planner');
   planner.elements.level.value = 'Core';
   planner.elements.duration.value = '40';
   const refreshActivities = () => {
-    planner.elements.activity.innerHTML = activities.filter(a=>a.outcome===planner.elements.outcome.value).map(a=>option(a.id,a.title)).join('');
+    planner.elements.activity.innerHTML = activities.filter(a=>activityOutcomeIds(a).includes(planner.elements.outcome.value)).map(a=>option(a.id,a.title)).join('');
   };
   function search(selected) {
     const f = filters.elements;
@@ -122,20 +123,20 @@ function outcomePage(params) {
     event.preventDefault();
     const { activity, level, duration } = Object.fromEntries(new FormData(planner));
     const a = activities.find(item=>item.id===activity);
-    const o = findOutcome(a);
+    const o = resolveOutcome(a,planner.elements.outcome.value);
     const time = Number(duration);
     const sections = [
-      ['Learning intention',o.summary],['Success criteria','State an idea before investigating. Compare relevant evidence. Explain a conclusion and identify a limitation.'],
+      ['Learning intention',o.summary],['Success criteria',o.criterion || 'State an idea before investigating. Compare relevant evidence. Explain a conclusion and identify a limitation.'],
       ['Prior knowledge','What do you expect to see? What experience or evidence informs your prediction?'],
       ['Teaching sequence',Math.floor(time*.2)+' min introduce and predict · '+Math.floor(time*.55)+' min investigate and compare · '+(time-Math.floor(time*.2)-Math.floor(time*.55))+' min explain and reflect.'],
-      ['Investigation',a.task],['Differentiation · '+level,levels[level]],['Discussion','Which result or source supports your claim? Could there be another explanation?'],
+      ['Investigation',o.enquiry || a.task],['Differentiation · '+level,levels[level]],['Discussion','Which result or source supports your claim? Could there be another explanation?'],
       ['Student reflection','What changed your thinking? What evidence would you collect next?'],['Proposed formative rubric',rubric.join(' · ')+' · Use emerging, developing or secure for each criterion.'],
       ['Follow-up','Transfer the idea to a second example. Ask a partner to check that the evidence supports the explanation.']
     ];
     const share = new URL(location.href);
-    share.hash = path(a)+'?level='+level;
+    share.hash = path(a)+'?'+new URLSearchParams({level,outcome:o.id});
     const content = main.querySelector('#lesson');
-    content.innerHTML = '<article class="panel printable"><p class="eyebrow">Lesson plan · '+duration+' minutes</p><h2>'+esc(a.title)+'</h2>'+sections.map(([key,value])=>'<h3>'+esc(key)+'</h3><p>'+esc(value)+'</p>').join('')+'<p>'+esc(o.status)+(o.source?' · '+link(o.source,o.document):'')+'</p><div class="actions no-print">'+activityLink(a,'Preview activity')+'<a href="'+esc(share.href)+'">Open student assignment</a><button type="button" data-copy>Copy assignment link</button><button type="button" data-print>Print / save PDF</button><button type="button" data-download>Download plan</button></div><label class="no-print">Assignment link<input readonly value="'+esc(share.href)+'"></label></article>';
+    content.innerHTML = '<article class="panel printable"><p class="eyebrow">Lesson plan · '+duration+' minutes</p><h2>'+esc(a.title)+'</h2>'+sections.map(([key,value])=>'<h3>'+esc(key)+'</h3><p>'+esc(value)+'</p>').join('')+'<p>'+esc(o.status)+(o.source?' · '+link(o.source,o.document):'')+'</p><div class="actions no-print">'+activityLink(a,'Preview activity',o.id)+'<a href="'+esc(share.href)+'">Open student assignment</a><button type="button" data-copy>Copy assignment link</button><button type="button" data-print>Print / save PDF</button><button type="button" data-download>Download plan</button></div><label class="no-print">Assignment link<input readonly value="'+esc(share.href)+'"></label></article>';
     content.querySelector('[data-print]').onclick = () => print();
     content.querySelector('[data-copy]').onclick = async () => {
       try { await navigator.clipboard.writeText(share.href); announce('Assignment link copied.'); }
@@ -167,13 +168,13 @@ function forceComparison(trials) {
   return 'Trial '+(trials.length-1)+': '+first+' m. Trial '+trials.length+': '+second+' m. '+[travelled,inputs,interpretation].filter(Boolean).join(' ');
 }
 function evidenceRows(activity, record) {
-  const o = findOutcome(activity);
+  const o = recordOutcome(activity,record);
   return [['Activity',activity.title],['Learning outcome (platform paraphrase)',curriculumText(o)],['Learning level',record.level],
     ['Learner',record.learner || 'Anonymous learner'],...fields[activity.group].map(([key,label])=>[label,record[key]]),
     ['Recorded trials and variables',record.trials.map((trial,index)=>'Trial '+(index+1)+'\n'+Object.entries(trial.inputs).map(([label,value])=>label+': '+value).join('; ')+'\n'+metricText(trial.results)).join('\n\n')],
-    ['Sources examined',record.sources.map(index => {
-      const row = history[activity.id]?.sources[index] || floodCase;
-      return row[0]+' — '+row[2];
+    ['Sources examined',record.sources.flatMap(index => {
+      const row = history[activity.id]?.sources[index] || caseStudyFor(activity.id);
+      return row ? [row[0]+' — '+row[2]] : [];
     }).join('\n')],['Interpreter questions',record.questions.join('\n')],['Model assumptions',activity.id==='electric' && record.trials.some(trial=>Object.hasOwn(trial.inputs,'Wiring')) ? labs.electric.notes+' '+circuitNotes : labs[activity.id]?.notes || 'Scene and character dialogue are educational interpretations.'],
     ['Teacher judgement',record.review?.judgement || 'Awaiting teacher review'],['Proposed rubric',record.review?.scores?.map((score,i)=>rubric[i]+': '+score).join('\n')],
     ['Teacher feedback / next steps',record.review?.feedback],['Suggested next step','Compare your conclusion with another trial or source and explain what would strengthen it.'],
@@ -199,10 +200,11 @@ function investigation(a, params) {
   const forces = a.id === 'forces';
   const electric = a.id === 'electric';
   const mdina = a.id === 'mdina';
-  const o = findOutcome(a);
+  const o = resolveOutcome(a,params.get('outcome'));
+  const caseStudy = caseStudyFor(a.id);
   const title = reportNames[a.group];
   main.innerHTML = '<p class="crumb"><a href="#'+a.group+'">'+groups[a.group].title+'</a></p>'+
-    intro(a.title,a.question,a.task)+
+    intro(a.title,a.question,o.enquiry || a.task)+
     '<div class="layout investigate"><section class="stack">'+
     (forces ? '<section class="panel"><h2>Make a prediction</h2><label>Predict what will happen and why.<textarea id="force-prediction" name="prediction" form="notebook" rows="2" maxlength="3000" required>'+esc(d.prediction)+'</textarea></label></section>' : '')+
     '<div class="panel visual"><div class="scene-stage"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas>'+(mdina ? '<button type="button" class="scene-object" id="mdina-object">Inspect town gate</button>' : '')+'</div><div class="scene-controls">'+(lab ? '<button data-run>'+ (forces ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">'+(mdina ? 'Previous stop' : 'Look left')+'</button><button class="secondary" data-view="1">'+(mdina ? 'Next stop' : 'Look right')+'</button>')+'</div>'+
@@ -211,7 +213,7 @@ function investigation(a, params) {
     (electric ? '<section class="panel"><div class="section-head"><h2>Circuit workbench</h2><button class="secondary" type="button" id="circuit-mode" aria-pressed="false">Build your own circuit</button></div><div id="circuit-builder" hidden><p>Choose two terminals to add a wire. Open the switch while you build, then close it to test the circuit.</p><div class="circuit-terminals">'+Object.entries(terminals).map(([id,name])=>'<button type="button" class="secondary" data-terminal="'+id+'" aria-pressed="false">'+name+'</button>').join('')+'</div><div class="actions"><button class="secondary" type="button" data-wire-template="series">Load series example</button><button class="secondary" type="button" data-wire-template="parallel">Load parallel example</button><button class="secondary" type="button" id="clear-wires">Clear wires</button></div><p id="wire-status" class="muted" aria-live="polite"></p><ul id="wires"></ul><details><summary>Read workbench assumptions</summary><p>'+esc(circuitNotes)+'</p></details></div></section>' : '')+
     (lab ? '<div class="panel"><div class="section-head"><h2>Model results</h2><span class="muted" id="budget"></span></div><div id="metrics" class="metrics"></div><details><summary>Read model assumptions</summary><p>'+esc(lab.notes)+'</p></details></div><section class="panel"><h2>Recorded trials</h2><div id="trials"></div></section>' : '<div class="panel"><p class="eyebrow">'+esc(dossier.place)+'</p><h2>Evidence desk</h2><div id="sources"></div><h3>Ask the '+esc(dossier.character.toLowerCase())+'</h3><p class="muted">Scripted fictional interpretation</p><div class="actions">'+['Tell me about your work','What should I compare?','What is uncertain?'].map((q,i)=>'<button class="secondary" data-question="'+i+'">'+q+'</button>').join('')+'</div><p id="reply" aria-live="polite"></p></div>')+
     (dossier ? '<section class="panel" id="history-mission"></section>' : '')+
-    (a.id==='flood' ? '<section class="panel"><h2>'+esc(floodCase[0])+'</h2><p>'+esc(floodCase[1])+'</p><p>'+link(floodCase[2],'Read the national flood risk assessment')+'</p><button class="secondary" data-source="0">Mark case study examined</button></section>' : '')+
+    (caseStudy ? '<section class="panel"><h2>'+esc(caseStudy[0])+'</h2><p>'+esc(caseStudy[1])+'</p><p>'+link(caseStudy[2],a.id==='flood' ? 'Read the national flood risk assessment' : 'Read the Energy and Water Agency guide')+'</p><button class="secondary" data-source="0">Mark case study examined</button></section>' : '')+
     '</section><aside class="stack"><section class="panel"><h2>Mission brief</h2><p class="eyebrow">Learning outcome</p><p>'+esc(o.summary)+'</p><p class="muted">'+esc(o.status)+'</p>'+(o.source?'<p>'+link(o.source,o.code+' · official source')+'</p>':'')+'<label>Learning level<select id="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><p id="guidance"></p><details><summary>Get a hint</summary><p>'+esc(a.group==='history' ? 'Ask what survives today. Which part of your claim follows directly from that source?' : 'Compare two trials. What stayed the same, and what changed?')+'</p></details></section>'+
     (lab?'<section class="panel"><h2>Change the variables</h2><form id="variables">'+lab.controls.map(control=>inputSettings(control,d.values)).join('')+'</form></section>':'')+'</aside></div>'+
     '<section class="panel notebook"><div class="section-head"><h2>Investigation notebook</h2><span class="muted">Saved in this browser</span></div><form id="notebook"><label>Anonymous learner ID <small>(optional)</small><input name="learner" maxlength="32" placeholder="e.g. Learner 07" value="'+esc(d.learner)+'"></label><div class="notebook-fields">'+fields[a.group].filter(([key])=>!forces || key!=='prediction').map(([key,label])=>'<label>'+esc(label)+'<textarea name="'+key+'" rows="3" maxlength="3000" required>'+esc(d[key])+'</textarea></label>').join('')+'</div><div class="actions"><button>Submit for local review</button><button type="button" class="secondary" data-export>Download '+esc(title)+'</button></div></form></section>';
@@ -445,12 +447,12 @@ function investigation(a, params) {
   const saveResponse = ({target}) => { d[target.name]=target.value; save(); };
   notebook.oninput = saveResponse;
   if (forces) main.querySelector('#force-prediction').oninput = saveResponse;
-  notebook.querySelector('[data-export]').onclick = () => exportEvidence(a,d);
+  notebook.querySelector('[data-export]').onclick = () => exportEvidence(a,{...d,outcomeId:o.id});
   notebook.onsubmit = event => {
     event.preventDefault();
     if (fields[a.group].some(([key])=>!d[key].trim())) { announce('Complete each notebook response before submitting.'); return; }
     if ((lab && !d.trials.length) || (dossier && !d.sources.length)) { announce(lab?'Record at least one trial before submitting.':'Mark at least one historical source examined before submitting.'); return; }
-    state.submissions.unshift({...structuredClone(d),activity:a.id,id:crypto.randomUUID?.() || String(Date.now()),submitted:new Date().toISOString()});
+    state.submissions.unshift({...structuredClone(d),outcomeId:o.id,activity:a.id,id:crypto.randomUUID?.() || String(Date.now()),submitted:new Date().toISOString()});
     save();
     announce('Investigation submitted for review in this browser.');
   };
@@ -470,7 +472,7 @@ const csvCell = value => '"' + (/^[\s]*[=+@-]|^[\t\r\n]/.test(String(value ?? ''
 function educator() {
   const submissions = state.submissions;
   const counts = outcomes.map(o => {
-    const related = submissions.filter(s=>activities.some(a=>a.id===s.activity && a.outcome===o.id));
+    const related = submissions.filter(s=>activities.some(a=>a.id===s.activity && recordOutcome(a,s).id===o.id));
     return {outcome:o, target:related.length, reviewed:related.filter(s=>s.review).length};
   }).filter(entry=>entry.target);
   main.innerHTML = intro('Teaching workspace','Educator dashboard','Plan an activity and review the reasoning captured in this browser.')+
@@ -487,7 +489,8 @@ function educator() {
     const rows=submissions.map(s=>{
       const a=activities.find(a=>a.id===s.activity);
       const evidence = evidenceRows(a,s);
-      return [s.learner,a.title,findOutcome(a).code || findOutcome(a).strand,s.prediction,s.observations,s.explanation,s.reflection,evidence[7][1],evidence[8][1],s.review?.judgement,s.review?.scores?.join(' / '),s.review?.feedback,a.group==='history' ? missionEvidence(a.id,s.mission) : ''];
+      const outcome = recordOutcome(a,s);
+      return [s.learner,a.title,outcome.code || outcome.strand,s.prediction,s.observations,s.explanation,s.reflection,evidence[7][1],evidence[8][1],s.review?.judgement,s.review?.scores?.join(' / '),s.review?.feedback,a.group==='history' ? missionEvidence(a.id,s.mission) : ''];
     });
     download('learningverse-evidence.csv',[headings,...rows].map(row=>row.map(csvCell).join(',')).join('\r\n'),'text/csv');
   };
