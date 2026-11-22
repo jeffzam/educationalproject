@@ -1,0 +1,6 @@
+{
+  "name": "malta-learningverse",
+  "private": true,
+  "type": "module",
+  "scripts": {"start":"node scripts/serve.mjs","build":"node scripts/build.mjs","test":"node --test --test-isolation=none"}
+}
