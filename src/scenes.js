@@ -179,6 +179,38 @@ export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, 
     if (active) label(travelled.toFixed(2)+' m travelled',22,247);
     label('Push',540,272,'#83ebd9'); label('Friction',605,272,'#ffab9d');
   } else if (id==='electric') {
+    if (v.circuitWires) {
+      const positions = {
+        battery:[138,92,'Battery'], switch:[360,92,'Switch'], resistor:[582,92,'Resistor'],
+        link:[138,211,'Test material'], bulb1:[360,211,'Bulb 1'], bulb2:[582,211,'Bulb 2']
+      };
+      const pin = terminal => {
+        const [part,side] = terminal.split('-');
+        const [x,y] = positions[part];
+        return [x+(side==='a'?-63:63),y];
+      };
+      const colors = ['#7ddedc','#e7b879','#a7b6ff','#f19dc4','#8ccfa8'];
+      v.circuitWires.forEach(([a,b],i)=>{
+        const [x1,y1]=pin(a), [x2,y2]=pin(b);
+        const bend=(y1===y2 ? (y1<150 ? 39 : -39) : 0)+(i%3-1)*11;
+        c.beginPath(); c.moveTo(x1,y1);
+        c.bezierCurveTo(x1+(x2-x1)*.32,y1+bend,x1+(x2-x1)*.68,y2+bend,x2,y2);
+        c.strokeStyle=colors[i%colors.length]; c.lineWidth=2.7; c.stroke();
+      });
+      for (const [part,[x,y,name]] of Object.entries(positions)) {
+        box(x-51,y-24,102,48,'#182845');
+        path([[x-61,y],[x-51,y]],'#a4c4ef',false,2);
+        path([[x+51,y],[x+61,y]],'#a4c4ef',false,2);
+        dot(x-63,y,5,'#c8d9ff'); dot(x+63,y,5,'#c8d9ff');
+        const power = part.startsWith('bulb') ? Number(results.find(([key])=>key===name+' power')?.[1]) : 0;
+        if (power > 0) dot(x,y,21+Math.min(11,power*4),'#aa8036');
+        c.textAlign='center'; label(name,x,y+5,power>0 ? '#fff1aa' : '#eff3ff');
+        c.textAlign='left';
+      }
+      label('Circuit workbench',22,28);
+      label(results[0]?.[1] || '',22,277);
+      return;
+    }
     const current = results[0]?.[1] || 0;
     const connected = v.wire ? [[190,80],[190,224],[530,224],[530,80]] : [[190,80],[190,224],[320,224]];
     path(connected,'#7595d2',false,5);

@@ -1,6 +1,7 @@
 import { activities, groups, outcomes, history, levels, rubric, floodCase, mdinaStops } from './content.js';
 import { labs, budget, compareForceTrials, defaults, displayInputs } from './models.js';
 import { scene } from './scenes.js';
+import { circuitNotes, circuitResults, connectWire, parallelWires, seriesWires, terminals } from './circuit.js';
 
 const main = document.querySelector('main');
 const navigation = [
@@ -172,7 +173,7 @@ function evidenceRows(activity, record) {
     ['Sources examined',record.sources.map(index => {
       const row = history[activity.id]?.sources[index] || floodCase;
       return row[0]+' — '+row[2];
-    }).join('\n')],['Interpreter questions',record.questions.join('\n')],['Model assumptions',labs[activity.id]?.notes || 'Scene and character dialogue are educational interpretations.'],
+    }).join('\n')],['Interpreter questions',record.questions.join('\n')],['Model assumptions',activity.id==='electric' && record.trials.some(trial=>Object.hasOwn(trial.inputs,'Wiring')) ? labs.electric.notes+' '+circuitNotes : labs[activity.id]?.notes || 'Scene and character dialogue are educational interpretations.'],
     ['Teacher judgement',record.review?.judgement || 'Awaiting teacher review'],['Proposed rubric',record.review?.scores?.map((score,i)=>rubric[i]+': '+score).join('\n')],
     ['Teacher feedback / next steps',record.review?.feedback],['Suggested next step','Compare your conclusion with another trial or source and explain what would strengthen it.'],
     ...(activity.id==='forces' && record.trials.length>1 ? [['Latest trial comparison',forceComparison(record.trials)]] : [])];
@@ -194,6 +195,7 @@ function investigation(a, params) {
   const lab = labs[a.id];
   const dossier = history[a.id];
   const forces = a.id === 'forces';
+  const electric = a.id === 'electric';
   const mdina = a.id === 'mdina';
   const o = findOutcome(a);
   const title = reportNames[a.group];
@@ -204,6 +206,7 @@ function investigation(a, params) {
     '<div class="panel visual"><div class="scene-stage"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas>'+(mdina ? '<button type="button" class="scene-object" id="mdina-object">Inspect town gate</button>' : '')+'</div><div class="scene-controls">'+(lab ? '<button data-run>'+ (forces ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">'+(mdina ? 'Previous stop' : 'Look left')+'</button><button class="secondary" data-view="1">'+(mdina ? 'Next stop' : 'Look right')+'</button>')+'</div>'+
     (forces ? '<div class="surface-controls"><p>Test friction while keeping the other settings fixed.</p><div class="actions"><button type="button" class="secondary" data-friction=".15" aria-pressed="false">Smoother surface</button><button type="button" class="secondary" data-friction=".5" aria-pressed="false">Rougher surface</button></div></div>' : '')+
     (mdina ? '<div class="tour-notes"><h2 id="mdina-stop"></h2><p id="mdina-description"></p><p id="mdina-compare" class="muted"></p><p class="muted">Use the buttons or focus the scene and press the left or right arrow key.</p></div>' : '')+'</div>'+
+    (electric ? '<section class="panel"><div class="section-head"><h2>Circuit workbench</h2><button class="secondary" type="button" id="circuit-mode" aria-pressed="false">Build your own circuit</button></div><div id="circuit-builder" hidden><p>Choose two terminals to add a wire. Open the switch while you build, then close it to test the circuit.</p><div class="circuit-terminals">'+Object.entries(terminals).map(([id,name])=>'<button type="button" class="secondary" data-terminal="'+id+'" aria-pressed="false">'+name+'</button>').join('')+'</div><div class="actions"><button class="secondary" type="button" data-wire-template="series">Load series example</button><button class="secondary" type="button" data-wire-template="parallel">Load parallel example</button><button class="secondary" type="button" id="clear-wires">Clear wires</button></div><p id="wire-status" class="muted" aria-live="polite"></p><ul id="wires"></ul><details><summary>Read workbench assumptions</summary><p>'+esc(circuitNotes)+'</p></details></div></section>' : '')+
     (lab ? '<div class="panel"><div class="section-head"><h2>Model results</h2><span class="muted" id="budget"></span></div><div id="metrics" class="metrics"></div><details><summary>Read model assumptions</summary><p>'+esc(lab.notes)+'</p></details></div><section class="panel"><h2>Recorded trials</h2><div id="trials"></div></section>' : '<div class="panel"><p class="eyebrow">'+esc(dossier.place)+'</p><h2>Evidence desk</h2><div id="sources"></div><h3>Ask the '+esc(dossier.character.toLowerCase())+'</h3><p class="muted">Scripted fictional interpretation</p><div class="actions">'+['Tell me about your work','What should I compare?','What is uncertain?'].map((q,i)=>'<button class="secondary" data-question="'+i+'">'+q+'</button>').join('')+'</div><p id="reply" aria-live="polite"></p></div>')+
     (a.id==='flood' ? '<section class="panel"><h2>'+esc(floodCase[0])+'</h2><p>'+esc(floodCase[1])+'</p><p>'+link(floodCase[2],'Read the national flood risk assessment')+'</p><button class="secondary" data-source="0">Mark case study examined</button></section>' : '')+
     '</section><aside class="stack"><section class="panel"><h2>Mission brief</h2><p class="eyebrow">Learning outcome</p><p>'+esc(o.summary)+'</p><p class="muted">'+esc(o.status)+'</p>'+(o.source?'<p>'+link(o.source,o.code+' · official source')+'</p>':'')+'<label>Learning level<select id="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><p id="guidance"></p><details><summary>Get a hint</summary><p>'+esc(a.group==='history' ? 'Ask what survives today. Which part of your claim follows directly from that source?' : 'Compare two trials. What stayed the same, and what changed?')+'</p></details></section>'+
@@ -217,8 +220,9 @@ function investigation(a, params) {
   let lastTime = 0;
   let active = false;
   let results = [];
+  const useBuilder = () => electric && d.circuitMode;
   function draw() {
-    scene(canvas,a.id,d.values,results,lastTime,historic,position,active);
+    scene(canvas,a.id,useBuilder() ? {...d.values, circuitWires:d.circuitWires} : d.values,results,lastTime,historic,position,active);
     if (!mdina) return;
     const stop = mdinaStops[position];
     const era = historic ? 'Educational reconstruction' : 'Present-day reference view';
@@ -238,7 +242,7 @@ function investigation(a, params) {
   if (lab) {
     const variables = main.querySelector('#variables');
     function readResults(reveal = !forces) {
-      results = lab.run(d.values);
+      results = useBuilder() ? circuitResults(d.values,d.circuitWires) : lab.run(d.values);
       main.querySelector('#metrics').innerHTML = reveal
         ? results.map(([k,v,u])=>'<div><strong>'+esc(v)+(u?' <small>'+esc(u)+'</small>':'')+'</strong><span>'+esc(k)+'</span></div>').join('')
         : '<p class="muted">Release the cart to see the results for these settings.</p>';
@@ -263,7 +267,7 @@ function investigation(a, params) {
       stop();
       readResults();
       draw();
-      if (reduced() || !['electric','matter'].includes(a.id)) return;
+      if (reduced() || useBuilder() || !['electric','matter'].includes(a.id)) return;
       const start = performance.now();
       const tick = time => {
         lastTime = (time-start)/1000;
@@ -278,10 +282,11 @@ function investigation(a, params) {
       const last = d.trials.at(-1);
       const comparison = forces && d.trials.length>1 ? '<div class="trial-comparison"><h3>Latest trial comparison</h3><p>'+esc(forceComparison(d.trials))+'</p></div>' : '';
       const comparable = last.results.find(([key])=>key==='Distance at 2 s') || last.results.find(row=>typeof row[1]==='number');
-      const chart = comparable && d.trials.length>1 ? '<div class="chart" aria-label="'+esc(comparable[0])+' comparison"><strong>'+esc(comparable[0])+'</strong>'+d.trials.map((trial,i)=>{
+      const matching = comparable ? d.trials.map((trial,index)=>({trial,index})).filter(({trial})=>trial.results.some(([key,value])=>key===comparable[0] && typeof value==='number')) : [];
+      const chart = matching.length>1 ? '<div class="chart" aria-label="'+esc(comparable[0])+' comparison"><strong>'+esc(comparable[0])+'</strong>'+matching.map(({trial,index})=>{
         const metric = trial.results.find(([key])=>key===comparable[0]);
-        const maximum = Math.max(1,...d.trials.map(item=>Math.abs(Number(item.results.find(([key])=>key===comparable[0])?.[1])||0)));
-        return '<div><span>Trial '+(i+1)+'</span><meter min="0" max="'+maximum+'" value="'+Math.abs(Number(metric?.[1])||0)+'"></meter><span>'+esc(metric?.[1])+' '+esc(metric?.[2])+'</span></div>';
+        const maximum = Math.max(1,...matching.map(({trial:item})=>Math.abs(item.results.find(([key])=>key===comparable[0])[1])));
+        return '<div><span>Trial '+(index+1)+'</span><meter min="0" max="'+maximum+'" value="'+Math.abs(metric[1])+'"></meter><span>'+esc(metric[1])+' '+esc(metric[2])+'</span></div>';
       }).join('')+'</div>' : '';
       area.innerHTML = comparison+chart+d.trials.map((t,i)=>'<details><summary>Trial '+(i+1)+'</summary><p>'+Object.entries(t.inputs).map(([k,v])=>esc(k)+': '+esc(v)).join(' · ')+'</p><p class="lines">'+esc(metricText(t.results))+'</p></details>').join('')+'<button class="secondary" data-undo>Remove last trial</button>';
       area.querySelector('[data-undo]').onclick = () => { d.trials.pop(); trials(); save(); announce('Last trial removed.'); };
@@ -300,7 +305,13 @@ function investigation(a, params) {
     main.querySelector('[data-run]').onclick = () => {
       if (d.trials.length>=20) { announce('The notebook holds 20 trials. Remove the last trial to record another.'); return; }
       readResults(true);
-      d.trials.push({inputs:displayInputs(a.id,d.values),results:structuredClone(results)});
+      const inputs = displayInputs(a.id,d.values);
+      if (useBuilder()) {
+        delete inputs['Connect return wire'];
+        delete inputs['Bulb arrangement'];
+        inputs.Wiring = d.circuitWires.map(([left,right])=>terminals[left]+' to '+terminals[right]).join('; ') || 'No wires';
+      }
+      d.trials.push({inputs,results:structuredClone(results)});
       trials(); save(); announce('Trial '+d.trials.length+' recorded.');
       if (!forces) return;
       stop();
@@ -314,6 +325,70 @@ function investigation(a, params) {
       };
       frame=requestAnimationFrame(tick);
     };
+    if (electric) {
+      d.circuitWires ??= [];
+      const modeButton = main.querySelector('#circuit-mode');
+      const builder = main.querySelector('#circuit-builder');
+      const wireList = main.querySelector('#wires');
+      const wireStatus = main.querySelector('#wire-status');
+      const terminalButtons = builder.querySelectorAll('[data-terminal]');
+      let selectedTerminal;
+      function renderWires(message='') {
+        terminalButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.terminal===selectedTerminal)));
+        wireList.innerHTML = d.circuitWires.map(([left,right],i)=>{
+          const description = terminals[left]+' to '+terminals[right];
+          return '<li><span>'+esc(description)+'</span> <button type="button" class="secondary" data-remove-wire="'+i+'" aria-label="Remove wire from '+esc(description)+'">Remove</button></li>';
+        }).join('');
+        wireStatus.textContent = message || (d.circuitWires.length ? d.circuitWires.length+' wires connected.' : 'No wires connected.');
+        builder.querySelector('#clear-wires').disabled = !d.circuitWires.length;
+      }
+      function updateBuilder() {
+        const enabled = Boolean(useBuilder());
+        builder.hidden = !enabled;
+        modeButton.setAttribute('aria-pressed',String(enabled));
+        variables.elements.wire.closest('label').hidden = enabled;
+        variables.elements.pattern.closest('label').hidden = enabled;
+        renderWires();
+      }
+      modeButton.onclick = () => {
+        d.circuitMode = !useBuilder();
+        selectedTerminal = undefined;
+        updateBuilder(); live(); save();
+      };
+      terminalButtons.forEach(button=>button.onclick = () => {
+        const terminal = button.dataset.terminal;
+        if (!selectedTerminal) {
+          selectedTerminal = terminal;
+          renderWires(terminals[terminal]+' selected. Choose the second terminal.');
+          return;
+        }
+        const wires = connectWire(d.circuitWires,selectedTerminal,terminal);
+        const message = selectedTerminal===terminal ? 'Terminal deselected.' : wires===d.circuitWires ? 'Those terminals are already connected.' : 'Wire added.';
+        d.circuitWires = wires;
+        selectedTerminal = undefined;
+        renderWires(message); live(); save();
+      });
+      wireList.onclick = event => {
+        const target = event.target.closest('[data-remove-wire]');
+        if (!target) return;
+        const index = Number(target.dataset.removeWire);
+        d.circuitWires.splice(index,1);
+        renderWires('Wire removed.'); live(); save();
+        (wireList.querySelector('[data-remove-wire="'+index+'"]') || terminalButtons[0]).focus();
+      };
+      builder.querySelectorAll('[data-wire-template]').forEach(button=>button.onclick = () => {
+        d.circuitWires = structuredClone(button.dataset.wireTemplate==='series' ? seriesWires : parallelWires);
+        selectedTerminal = undefined;
+        renderWires(button.textContent+' applied.'); live(); save();
+      });
+      builder.querySelector('#clear-wires').onclick = () => {
+        d.circuitWires = [];
+        selectedTerminal = undefined;
+        renderWires('Wires cleared.'); live(); save();
+        terminalButtons[0].focus();
+      };
+      updateBuilder();
+    }
     syncControls(); live(); trials();
   } else {
     const portal = main.querySelector('[data-portal]');

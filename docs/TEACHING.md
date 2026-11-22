@@ -18,6 +18,15 @@
 - For an extension, switch to Earth’s orbit and compare daylight around the June and December solstices. Change the lunar day separately and describe what changes in the Moon inset.
 - Compare the Moon inset with observations or with [NASA’s Moon Phases guide](https://science.nasa.gov/moon/moon-phases/).
 
+## Electricity · 35 minutes
+
+**Intention** — Use bulb observations to explain an electrical energy transfer. Curriculum link: Year 5 Primary Science 5.5.2.
+
+- Enable Build your own circuit. Connect Battery positive to Bulb 1 terminal A and Bulb 1 terminal B to Battery negative. Record the current and bulb power.
+- Open the switch control and load the series example. Predict what happens when you close the switch, then record the result.
+- Load the parallel example at the same voltage and resistance. Compare output power in both arrangements and explain what the bulb demonstrates.
+- For an extension, swap copper for plastic in the test link and explain the open circuit.
+
 ## Roman Malta · 40 minutes
 
 **Intention** — Draw and qualify an inference about a Roman household. Curriculum link: Year 7 History General, HIS 7.4, objective 3, item 9.

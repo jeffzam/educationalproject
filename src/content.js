@@ -29,7 +29,7 @@ export const outcomes = [
 
 export const activities = [
   ['forces','science','Forces and Motion','prediction','Which change makes the cart travel farther in two seconds?','Run two trials. Change just one variable and compare the distances.'],
-  ['electric','science','Electricity','energy','When do the bulbs light, and how does the circuit arrangement affect them?','Compare an open circuit with a closed one. Then compare series and parallel at a fixed voltage.'],
+  ['electric','science','Electricity','energy','When do the bulbs light, and how does the circuit arrangement affect them?','Compare an open circuit with a closed one. Use the workbench to wire two bulbs in series or parallel, then compare their power at a fixed voltage.'],
   ['matter','science','States of Matter','prediction','How will changing the temperature affect the particles in water?','Compare below freezing, room temperature and the boiling point. Explain your observations at both scales.'],
   ['space','science','Space and Earth','space','Why do we have day and night?','Record Malta’s sky at noon and midnight while keeping the orbital day fixed. Then compare daylight at two points in the orbit, or change the lunar day to investigate Moon phases.'],
   ['ecosystem','science','Ecosystem Explorer','habitat','How might habitat loss affect different organisms in a food web?','Run a baseline and a habitat-loss scenario. Change initial species counts to see what the model can and cannot tell you.'],

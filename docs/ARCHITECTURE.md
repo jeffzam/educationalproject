@@ -8,6 +8,7 @@ The platform is a dependency-free static application in browser-native JavaScrip
 | --- | --- |
 | `src/content.js` | Activity definitions, curriculum references, inquiry prompts, historical dossiers and rubric criteria |
 | `src/models.js` | Control definitions and deterministic simulation functions |
+| `src/circuit.js` | Wiring definitions and ideal DC circuit solver |
 | `src/scenes.js` | Procedural scenes and animation drawn from simulation inputs and outputs |
 | `src/app.js` | Hash routing, assignment links, lesson generator, evidence collection, review, exports and demo |
 | `public/style.css` | Responsive, keyboard focus, motion and print styles |

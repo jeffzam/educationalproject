@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { activities, outcomes, history, mdinaStops } from '../src/content.js';
 import { labs, compareForceTrials, defaults, displayInputs } from '../src/models.js';
+import { circuitResults, connectWire, parallelWires, seriesWires, solveCircuit } from '../src/circuit.js';
 
 test('every activity has a unique ID, curriculum record and one experience', () => {
   assert.equal(activities.length, 12);
@@ -58,6 +59,29 @@ test('circuits open and parallel branches receive more current than series', () 
   assert.equal(metric('electric','Circuit current',{switch:0}),0);
   assert.equal(metric('electric','Circuit current',{switch:1,material:1}),0);
   assert.ok(metric('electric','Current per bulb',{switch:1,pattern:2}) > metric('electric','Current per bulb',{switch:1,pattern:1}));
+});
+test('workbench solver follows wiring instead of a selected circuit arrangement', () => {
+  const settings = {...defaults('electric'),switch:1};
+  const series = solveCircuit(settings,seriesWires);
+  const parallel = solveCircuit(settings,parallelWires);
+  assert.ok(Math.abs(series.current - 6/27) < 1e-10);
+  assert.ok(Math.abs(parallel.current - 6/9) < 1e-10);
+  assert.ok(parallel.powers.every((power,i)=>power>series.powers[i]));
+  assert.equal(solveCircuit(settings,seriesWires.slice(0,-1)).status,'Open circuit');
+  assert.equal(solveCircuit({...settings,material:1},seriesWires).current,0);
+  assert.equal(solveCircuit({...settings,switch:0},parallelWires).current,0);
+  assert.equal(solveCircuit({...settings,battery:0},parallelWires).status,'Battery removed');
+  assert.equal(circuitResults(settings,[['battery-a','battery-b']])[1][1],'Unavailable');
+});
+test('workbench wires are undirected and reject duplicate and self connections', () => {
+  const wires=connectWire([],'battery-a','bulb1-a');
+  assert.equal(connectWire(wires,'bulb1-a','battery-a'),wires);
+  assert.equal(connectWire(wires,'resistor-a','resistor-a'),wires);
+  assert.equal(connectWire(wires,'unknown','resistor-a'),wires);
+  const loop=connectWire(wires,'bulb1-b','battery-b');
+  const { current,powers } = solveCircuit({...defaults('electric'),switch:0},loop);
+  assert.equal(current,.5);
+  assert.deepEqual(powers,[3,0]);
 });
 test('water phase boundaries and seasonal geometry respond to controls', () => {
   assert.equal(metric('matter','Bulk state',{temperature:0}),'Ice and liquid');

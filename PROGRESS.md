@@ -2,6 +2,12 @@
 
 **Release status: in development.**
 
+## Electricity circuit workbench · 22 November 2026
+
+Students can wire the terminals of six bench components directly, remove individual wires and load series or parallel examples. The solver calculates current and bulb power from those connections, with explicit open, short and disconnected battery states. The investigation records wiring and results in its report. Component positions are fixed and the model uses ideal DC components.
+
+The build and 19 automated tests passed. Browser checks verified a hand-wired single-bulb circuit, series and parallel readings, draft wiring after reload, short circuit detection and recovery, report download, and phone-width layout.
+
 ## Space and Earth investigation · 22 November 2026
 
 The globe and result cards now share the same solar geometry. Students can move Malta between the lit and dark sides, switch to an orbital view to examine seasonal position and tilt, and see the illuminated fraction of the Moon change in a separate inset. The day-and-night activity maps to 5.9.1 in the October 2026 Year 5 Primary Science outcomes. Sizes, distances and the lunar orientation are illustrative.
@@ -39,9 +45,9 @@ The first working local release includes twelve investigations: five science mod
 
 - Add a richer 3D presentation and accessible interaction layer. Current scenes are illustrated Canvas 2D with scripted animations. Mdina has a three-stop perspective tour and interactive evidence. Continuous camera movement and richer reconstruction detail remain open.
 - Extend curriculum mapping and confirm school adoption of older documents for 2026–27. Add subject-level mappings for Social Studies and lower-secondary Science, and broader coverage for Geography and Environmental Studies.
-- Expand circuit construction and historical enquiry missions. The current circuit uses configurable templates, and historical characters use scripted questions.
+- Expand historical enquiry missions. Historical characters use scripted questions. The circuit workbench supports terminal-level wiring on a fixed bench, with six components.
 - Add an optional provider-backed tutor and aggregate misconception reporting if needed for a later release. The current package uses contextual scripted hints and individual teacher feedback.
 - Extend English text extraction for future Maltese translation, browser acceptance automation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority: expand circuit construction into student-controlled component placement and connectivity. Preserve the shared outcome, reasoning and evidence workflow across all three modules.
+Next implementation priority: expand Time Portal history missions beyond the current introductory enquiries. Preserve the shared outcome, reasoning and evidence workflow across all three modules.

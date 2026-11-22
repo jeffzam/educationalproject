@@ -87,6 +87,12 @@ p + p { margin-top: .5rem; }
 .scene-controls { display:flex; gap:.65rem; flex-wrap:wrap; padding:.9rem; }
 .surface-controls { padding:0 .9rem .9rem; }
 .surface-controls button[aria-pressed=true] { border-color:var(--accent); color:var(--accent); }
+.circuit-terminals { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr)); gap:.5rem; margin-top:.8rem; }
+.circuit-terminals button { justify-content:center; text-align:center; }
+.circuit-terminals button[aria-pressed=true], #circuit-mode[aria-pressed=true] { border-color:var(--accent); color:var(--accent); }
+#wire-status { margin-top:.8rem; }
+#wires li { display:flex; flex-wrap:wrap; gap:.3rem .6rem; align-items:center; justify-content:space-between; }
+#wires button { padding:.28rem .65rem; }
 .trial-comparison { padding:.85rem; background:#1b2b45; border-radius:.6rem; margin-bottom:1rem; }
 .tour-notes { padding:0 .9rem 1rem; }
 .tour-notes h2 { font-size:1.15rem; }
@@ -94,6 +100,7 @@ p + p { margin-top: .5rem; }
 .transition { animation:portal .8s ease-out; }
 [data-motion=reduced] *, [data-motion=reduced] *::before, [data-motion=reduced] *::after { animation:none !important; scroll-behavior:auto !important; }
 label { font-weight:650; display:grid; gap:.35rem; }
+label[hidden] { display:none; }
 select,input:not([type=range]),textarea { width:100%; min-width:0; background:#0b1528; color:var(--ink); border:1px solid #465875; border-radius:.5rem; padding:.55rem .65rem; }
 select { appearance:none; padding-right:2.1rem; background-image:linear-gradient(45deg,transparent 50%,#b4c6de 50%),linear-gradient(135deg,#b4c6de 50%,transparent 50%); background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%; background-size:5px 5px; background-repeat:no-repeat; }
 textarea { resize:vertical; }
