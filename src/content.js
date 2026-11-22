@@ -34,7 +34,7 @@ export const activities = [
   ['space','science','Space and Earth','space','What changes when Earth rotates or when its tilt changes?','Follow Malta over one rotation. Then compare daylight hours at two points in the orbit.'],
   ['ecosystem','science','Ecosystem Explorer','habitat','How might habitat loss affect different organisms in a food web?','Run a baseline and a habitat-loss scenario. Change initial species counts to see what the model can and cannot tell you.'],
   ['roman','history','Roman Malta','roman','What can surviving objects tell us about Roman life in Malta?','Inspect two sources, ask the interpreter a question and support a claim with evidence.'],
-  ['mdina','history','Medieval Mdina','mdina','What might a working day inside medieval Mdina have been like?','Compare work, security and community with the present. Mark details that remain uncertain.'],
+  ['mdina','history','Medieval Mdina','mdina','What might a working day inside medieval Mdina have been like?','Visit the gate, market stall and workshop in both eras. Record three differences, support two claims with sources and explain one change over time.'],
   ['knights','history','Malta Under the Knights','knights','How did the Knights’ move to Malta change the role of harbour settlements?','Use the timeline and harbour source to connect an event with a consequence.'],
   ['flood','future','Coastal Flooding','flood','Save a Maltese Coastal Town','Record a baseline, add protection within €1 million and justify your plan. Pair your model evidence with the real flood case study.'],
   ['water','future','Water Management','water','Can the town meet a month of water demand after a dry spell?','Compare a supply intervention with conservation or leakage repairs.'],
@@ -71,6 +71,26 @@ export const history = {
     responses: ['A harbour connects people and goods. How might an institution settling nearby change demand for work?', 'The view helps explain why this headland mattered. Find a source that supports your explanation.', 'Look at dates before treating the structures as contemporary. The scene compresses several features for teaching.']
   }
 };
+export const mdinaStops = [
+  {
+    name: 'Town gate', source: 0,
+    present: 'Look at the entrance and the pedestrian approach in the reference illustration.',
+    medieval: 'Imagine a resident or trader approaching the gate. How might controlling access affect their day?',
+    compare: 'Which function might a gate keep over time? Which detail would you need to verify in a source?'
+  },
+  {
+    name: 'Market stall', source: 1,
+    present: 'Compare the permanent shop in the reference illustration with the stall across the portal.',
+    medieval: 'The cloth on the stall represents cotton trading. The individual stall and its placement are imagined.',
+    compare: 'How might buying or selling goods differ between the scenes? What does the source establish about work?'
+  },
+  {
+    name: 'Workshop', source: 2,
+    present: 'The reference illustration shows a closed street-front doorway. Think about where and how people work today.',
+    medieval: 'The open doorway and tools suggest a blacksmith’s workspace. The layout and individual objects are imagined.',
+    compare: 'Which detail comes from an interpretation? What kind of evidence would help you check it?'
+  }
+];
 export const floodCase = ['Real case study: Malta’s September 2003 floods', 'The national assessment records rainfall flooding on 15 September 2003. It lists Qormi, Msida, Birkirkara, Burmarrad, Siġġiewi and Marsa, and reports disruption to traffic and damage to private property. Use the report to compare how rainfall flooding and coastal flooding affect people and infrastructure.', 'https://www.energywateragency.gov.mt/wp-content/uploads/2017/12/Preliminary-Flood-Risk-Assessment-Final-Report.pdf'];
 export const levels = {
   Support: 'Use two examples and this frame: I changed or inspected __. I noticed __. This suggests __.',

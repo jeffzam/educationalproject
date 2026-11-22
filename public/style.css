@@ -80,7 +80,13 @@ p + p { margin-top: .5rem; }
 .over { color:#ffc2ac; font-weight:700; }
 .visual { padding:0; overflow:hidden; }
 .visual canvas { width:100%; display:block; height:auto; background:#212e51; }
+.scene-stage { position:relative; }
+.scene-object { position:absolute; z-index:1; top:55%; left:53%; transform:translateX(-25%); box-shadow:0 2px 12px #100f2aaa; font-size:.875rem; padding:.46rem .68rem; }
+.scene-object[data-stop="0"] { left:45%; }
+.scene-object[data-stop="2"] { left:62%; }
 .scene-controls { display:flex; gap:.65rem; flex-wrap:wrap; padding:.9rem; }
+.tour-notes { padding:0 .9rem 1rem; }
+.tour-notes h2 { font-size:1.15rem; }
 @keyframes portal { 0% { opacity:.38; filter:brightness(1.65) saturate(.4); } 100% { opacity:1; filter:none; } }
 .transition { animation:portal .8s ease-out; }
 [data-motion=reduced] *, [data-motion=reduced] *::before, [data-motion=reduced] *::after { animation:none !important; scroll-behavior:auto !important; }
@@ -126,6 +132,7 @@ ul { padding-left:1.3rem; } li + li { margin-top:.4rem; }
   .hero-art { inset:0 0 0 28%; opacity:.35; }
   .notebook-fields,.filters { grid-template-columns:1fr; }
   footer { flex-direction:column; }
+  .scene-object { left:auto !important; right:.45rem; top:auto; bottom:.45rem; transform:none; }
 }
 @media print {
   :root { color-scheme:light; }

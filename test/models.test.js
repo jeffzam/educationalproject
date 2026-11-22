@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { activities, outcomes, history } from '../src/content.js';
+import { activities, outcomes, history, mdinaStops } from '../src/content.js';
 import { labs, defaults, displayInputs } from '../src/models.js';
 
 test('every activity has a unique ID, curriculum record and one experience', () => {
@@ -15,6 +15,14 @@ test('every activity has a unique ID, curriculum record and one experience', () 
       assert.ok(outcome.code);
       assert.match(outcome.source, /^https:\/\/(curriculum\.gov\.mt|primaryscience\.skola\.edu\.mt)\/.*#page=\d+$/);
     } else assert.equal(outcome.code, undefined);
+  }
+});
+test('each Mdina stop points to distinct evidence and supports comparison across eras', () => {
+  assert.equal(mdinaStops.length, history.mdina.sources.length);
+  assert.equal(new Set(mdinaStops.map(stop => stop.source)).size, mdinaStops.length);
+  for (const stop of mdinaStops) {
+    assert.ok(history.mdina.sources[stop.source]?.[2].startsWith('https://'));
+    assert.ok(stop.present && stop.medieval && stop.compare);
   }
 });
 for (const [id, lab] of Object.entries(labs)) {

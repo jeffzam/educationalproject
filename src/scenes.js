@@ -26,6 +26,79 @@ export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, 
   box(0,0,720,300,sky);
   for (let i=0;i<32;i++) dot((i*103+17)%720,(i*79+11)%170,1,'#ffffff25');
 
+  if (id === 'mdina') {
+    const vanishingX = [354, 304, 382][position];
+    const horizon = 132;
+    const project = (x, y, depth) => {
+      const scale = 200 / depth;
+      return [vanishingX + x * scale, horizon - (y - 1.65) * scale];
+    };
+    const polygon = (vertices, color) => path(vertices.map(point => project(...point)), color, true);
+    const lightStone = historic ? '#dcb187' : '#dccab0';
+    const darkStone = historic ? '#8e6150' : '#8d7b6e';
+    const street = historic ? '#a0816c' : '#919396';
+    const masonry = historic ? '#795a51' : '#77767c';
+    dot(vanishingX + 54, 60, 32, historic ? '#ffd5ab' : '#d0e5ef');
+    polygon([[-35,0,25],[35,0,25],[35,0,1.3],[-35,0,1.3]], street);
+    for (let depth = 22; depth > 1.3; depth -= .85) {
+      path([project(-9,0,depth), project(9,0,depth)], masonry, false, 1);
+      if (!historic) {
+        path([project(-2.2,0,depth),project(-2.2,0,Math.max(1.3,depth-.8))],'#e3ce9f');
+      }
+    }
+
+    for (let block = 5; block >= 0; block--) {
+      const front = 2.4 + block * 3.5;
+      const back = front + 3.5;
+      const wallFront = block === 0 ? 1.15 : front;
+      const height = 4.1 + ((block + position) % 3) * .55;
+      for (const side of [-1, 1]) {
+        const x = side * (side === 1 && block === 0 ? 2.55 : 2.15);
+        polygon([[x,0,wallFront],[x,height,wallFront],[x,height,back],[x,0,back]], side === 1 ? lightStone : darkStone);
+        for (let course = .55; course < height; course += .48) {
+          path([project(x,course,wallFront),project(x,course,back)],side === 1 ? '#c0947b' : '#77594f',false,1);
+        }
+        polygon([[x,.9,front+.7],[x,2.45,front+.7],[x,2.45,front+1.55],[x,.9,front+1.55]], '#574350');
+        polygon([[x,2.75,front+1.4],[x,3.54,front+1.4],[x,3.54,front+2.25],[x,2.75,front+2.25]], side === 1 ? '#75544f' : '#4b414e');
+      }
+    }
+    if (position === 0) {
+      const gate = historic ? '#cc9d76' : '#bdbaa9';
+      polygon([[-3,2.5,4.6],[3,2.5,4.6],[3,4.65,4.6],[-3,4.65,4.6]], gate);
+      polygon([[-3,0,4.6],[-1.28,0,4.6],[-1.28,3.05,4.6],[-3,3.05,4.6]], gate);
+      polygon([[1.28,0,4.6],[3,0,4.6],[3,3.05,4.6],[1.28,3.05,4.6]], gate);
+      const arch = Array.from({length: 9}, (_, i) => {
+        const angle = Math.PI * i / 8;
+        return project(Math.cos(angle) * 1.25, 2.1 + Math.sin(angle), 4.59);
+      });
+      path([project(1.25,0,4.59), ...arch, project(-1.25,0,4.59)], '#664f4b', false, 4);
+    } else if (position === 1) {
+      const counter = historic ? '#865549' : '#536978';
+      polygon([[.95,0,3.3],[2.5,0,3.3],[2.5,.9,3.3],[.95,.9,3.3]], counter);
+      polygon([[.7,2.0,3.2],[2.75,2.0,3.2],[2.75,2.55,4.8],[.7,2.55,4.8]],historic ? '#c6595b' : '#659492');
+      for(let i=0;i<4;i++) {
+        polygon([[1+i*.36,.91,3.35],[1.25+i*.36,.91,3.35],[1.3+i*.36,1.04,3.7],[1+i*.36,1.04,3.7]], ['#e1c4a4','#7b566e','#d1a96a','#6a7777'][i]);
+      }
+    } else {
+      polygon([[.85,0,3.6],[2.85,0,3.6],[2.85,2.7,3.6],[.85,2.7,3.6]], historic ? '#503744' : '#566378');
+      if (historic) {
+        const [x,y] = project(1.7,.73,3.5);
+        dot(x,y,18,'#d6704b');
+        dot(x,y+5,9,'#ffb165');
+        box(x-39,y+6,25,11,'#4e4b59');
+      } else {
+        path([project(1.85,0,3.57),project(1.85,2.7,3.57)], '#9da2a9',false,3);
+      }
+    }
+    const [walkerX,walkerY] = project(-.8,0,5.6);
+    dot(walkerX,walkerY-52,9,historic ? '#b88465' : '#a8786c');
+    path([[walkerX-10,walkerY-42],[walkerX+10,walkerY-42],[walkerX+15,walkerY-10],[walkerX-15,walkerY-10]], historic ? '#764b60' : '#39667f',true);
+    path([[walkerX-9,walkerY-12],[walkerX-12,walkerY],[walkerX+12,walkerY],[walkerX+9,walkerY-12]], '#53414d',false,4);
+    box(12,9,historic ? 184 : 195,27,'#272139');
+    label(historic ? 'Educational reconstruction' : 'Present-day reference view',22,28);
+    return;
+  }
+
   if (history) {
     dot(584,74,37,historic?'#ffd3a0':'#b4d7ec');
     const stone = historic?'#d9aa77':'#a7acb3';
@@ -40,10 +113,6 @@ export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, 
       prism(x,y,55,height,14,stone,side,roof);
       box(x+19,y-32,14,32,side);
       box(x+12,y-height+13,11,15,side);
-      if (id==='mdina' && historic && i%3===0) {
-        box(x+6,y-4,38,19,'#775068');
-        path([[x,y-8],[x+12,y-23],[x+38,y-23],[x+48,y-8]],'#ae514c',true);
-      }
     }
     if (historic && id==='roman') {
       path([[298,268],[445,268],[486,232],[357,232]],'#7c4c48',true);

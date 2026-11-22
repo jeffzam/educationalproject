@@ -1,4 +1,4 @@
-import { activities, groups, outcomes, history, levels, rubric, floodCase } from './content.js';
+import { activities, groups, outcomes, history, levels, rubric, floodCase, mdinaStops } from './content.js';
 import { labs, budget, defaults, displayInputs } from './models.js';
 import { scene } from './scenes.js';
 
@@ -182,11 +182,13 @@ function investigation(a, params) {
   if (Object.hasOwn(levels,params.get('level'))) d.level = params.get('level');
   const lab = labs[a.id];
   const dossier = history[a.id];
+  const mdina = a.id === 'mdina';
   const o = findOutcome(a);
   const title = reportNames[a.group];
   main.innerHTML = '<p class="crumb"><a href="#'+a.group+'">'+groups[a.group].title+'</a></p>'+
     intro(a.title,a.question,a.task)+
-    '<div class="layout investigate"><section class="stack"><div class="panel visual"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas><div class="scene-controls">'+(lab ? '<button data-run>'+ (a.id==='forces' ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">Look left</button><button class="secondary" data-view="1">Look right</button>')+'</div></div>'+
+    '<div class="layout investigate"><section class="stack"><div class="panel visual"><div class="scene-stage"><canvas id="simulation" width="720" height="300" role="img" aria-label="'+esc(a.title+' illustration. Equivalent evidence is available as text below.')+'"></canvas>'+(mdina ? '<button type="button" class="scene-object" id="mdina-object">Inspect town gate</button>' : '')+'</div><div class="scene-controls">'+(lab ? '<button data-run>'+ (a.id==='forces' ? 'Release cart' : 'Run and record scenario')+'</button><button class="secondary" data-reset>Restore starting controls</button>' : '<button data-portal>Enter time portal</button><button class="secondary" data-view="-1">'+(mdina ? 'Previous stop' : 'Look left')+'</button><button class="secondary" data-view="1">'+(mdina ? 'Next stop' : 'Look right')+'</button>')+'</div>'+
+    (mdina ? '<div class="tour-notes"><h2 id="mdina-stop"></h2><p id="mdina-description"></p><p id="mdina-compare" class="muted"></p><p class="muted">Use the buttons or focus the scene and press the left or right arrow key.</p></div>' : '')+'</div>'+
     (lab ? '<div class="panel"><div class="section-head"><h2>Model results</h2><span class="muted" id="budget"></span></div><div id="metrics" class="metrics"></div><details><summary>Read model assumptions</summary><p>'+esc(lab.notes)+'</p></details></div><section class="panel"><h2>Recorded trials</h2><div id="trials"></div></section>' : '<div class="panel"><p class="eyebrow">'+esc(dossier.place)+'</p><h2>Evidence desk</h2><div id="sources"></div><h3>Ask the '+esc(dossier.character.toLowerCase())+'</h3><p class="muted">Scripted fictional interpretation</p><div class="actions">'+['Tell me about your work','What should I compare?','What is uncertain?'].map((q,i)=>'<button class="secondary" data-question="'+i+'">'+q+'</button>').join('')+'</div><p id="reply" aria-live="polite"></p></div>')+
     (a.id==='flood' ? '<section class="panel"><h2>'+esc(floodCase[0])+'</h2><p>'+esc(floodCase[1])+'</p><p>'+link(floodCase[2],'Read the national flood risk assessment')+'</p><button class="secondary" data-source="0">Mark case study examined</button></section>' : '')+
     '</section><aside class="stack"><section class="panel"><h2>Mission brief</h2><p class="eyebrow">Learning outcome</p><p>'+esc(o.summary)+'</p><p class="muted">'+esc(o.status)+'</p>'+(o.source?'<p>'+link(o.source,o.code+' · official source')+'</p>':'')+'<label>Learning level<select id="level">'+Object.keys(levels).map(l=>option(l)).join('')+'</select></label><p id="guidance"></p><details><summary>Get a hint</summary><p>'+esc(a.group==='history' ? 'Ask what survives today. Which part of your claim follows directly from that source?' : 'Compare two trials. What stayed the same, and what changed?')+'</p></details></section>'+
@@ -200,7 +202,21 @@ function investigation(a, params) {
   let lastTime = 0;
   let active = false;
   let results = [];
-  function draw() { scene(canvas,a.id,d.values,results,lastTime,historic,position,active); }
+  function draw() {
+    scene(canvas,a.id,d.values,results,lastTime,historic,position,active);
+    if (!mdina) return;
+    const stop = mdinaStops[position];
+    const era = historic ? 'Educational reconstruction' : 'Present-day reference view';
+    const object = main.querySelector('#mdina-object');
+    object.dataset.stop = String(position);
+    object.textContent = 'Inspect '+stop.name.toLowerCase();
+    main.querySelector('#mdina-stop').textContent = stop.name+' · '+era;
+    main.querySelector('#mdina-description').textContent = historic ? stop.medieval : stop.present;
+    main.querySelector('#mdina-compare').textContent = stop.compare;
+    canvas.setAttribute('aria-label',stop.name+' · '+era+'. Use left and right arrow keys to visit other stops.');
+    main.querySelector('[data-view="-1"]').disabled = position === 0;
+    main.querySelector('[data-view="1"]').disabled = position === mdinaStops.length - 1;
+  }
   level.value = d.level;
   guide.textContent = levels[d.level];
   level.onchange = () => { d.level = level.value; guide.textContent = levels[d.level]; save(); };
@@ -284,17 +300,28 @@ function investigation(a, params) {
       draw();
       announce(historic ? 'Educational reconstruction opened.' : 'Present-day reference view opened.');
     };
-    main.querySelectorAll('[data-view]').forEach(button => button.onclick = () => {
-      position = Math.max(-4,Math.min(4,position+Number(button.dataset.view)));
+    function move(direction) {
+      const minimum = mdina ? 0 : -4;
+      const maximum = mdina ? mdinaStops.length - 1 : 4;
+      const next = Math.max(minimum,Math.min(maximum,position+direction));
+      if (next === position) return;
+      position = next;
       draw();
-    });
+      if (mdina) announce('You reached the '+mdinaStops[position].name.toLowerCase()+'.');
+    }
+    main.querySelectorAll('[data-view]').forEach(button => button.onclick = () => move(Number(button.dataset.view)));
     canvas.tabIndex = 0;
     canvas.onkeydown = event => {
       if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
       event.preventDefault();
-      main.querySelector('[data-view="'+(event.key==='ArrowLeft'?-1:1)+'"]').click();
+      move(event.key==='ArrowLeft' ? -1 : 1);
     };
-    main.querySelector('#sources').innerHTML = dossier.sources.map(([name,detail,url],i)=>'<details><summary>'+esc(name)+'</summary><p>'+esc(detail)+'</p><p>'+link(url,'Open original source')+'</p><button class="secondary" data-source="'+i+'">Mark source examined</button></details>').join('');
+    main.querySelector('#sources').innerHTML = dossier.sources.map(([name,detail,url],i)=>'<details id="source-'+i+'"><summary>'+esc(name)+'</summary><p>'+esc(detail)+'</p><p>'+link(url,'Open original source')+'</p><button class="secondary" data-source="'+i+'">Mark source examined</button></details>').join('');
+    if (mdina) main.querySelector('#mdina-object').onclick = () => {
+      const evidence = main.querySelector('#source-'+mdinaStops[position].source);
+      evidence.open = true;
+      evidence.querySelector('summary').focus();
+    };
     main.querySelectorAll('[data-question]').forEach(button=>button.onclick=()=>{
       const index=Number(button.dataset.question);
       main.querySelector('#reply').textContent=dossier.responses[index];

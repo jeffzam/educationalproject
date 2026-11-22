@@ -1,5 +1,15 @@
 # Development checkpoint
 
+**Release status: in development.**
+
+## Medieval Mdina checkpoint · 22 November 2026
+
+Students can walk between three illustrated stops using buttons or the arrow keys. The portal preserves the selected stop when switching eras. Each on-scene evidence button opens and focuses the corresponding dossier entry, which students can record in their notebook.
+
+The fixed viewpoint lets students compare the same point on the street in both eras. The scene uses perspective drawing on Canvas 2D and three discrete camera positions so it works without WebGL. Each view is an educational illustration. The dossier provides a way to check claims and distinguish them from imagined details.
+
+The build and 16 automated tests passed. Browser checks verified movement in both directions, the first and last stop boundaries, era switching at the same stop, opening and focusing the matching evidence, marking evidence examined, and layout at a 390 px viewport. The full project acceptance review is still pending.
+
 ## 22 November 2026
 
 The first working local release includes twelve investigations: five science models, three historical reconstructions and four sustainability scenarios. All main areas are navigable. Seven curriculum records link verified identifiers to official documents and four objectives are marked as proposed. Teaching materials, timed differentiation, deep links, local evidence notebooks, teacher review, text and CSV exports, browser print, and a resettable five-minute demo are in place.
@@ -15,11 +25,11 @@ The first working local release includes twelve investigations: five science mod
 
 ## Remaining work
 
-- Add a richer 3D presentation and accessible interaction layer. Current scenes are illustrated Canvas 2D with perspective, panning and scripted animations. Prioritise a walkable Mdina street with interactive evidence objects and more distinct present-day and reconstructed views.
+- Add a richer 3D presentation and accessible interaction layer. Current scenes are illustrated Canvas 2D with scripted animations. Mdina has a three-stop perspective tour and interactive evidence. Continuous camera movement and richer reconstruction detail remain open.
 - Extend curriculum mapping and confirm school adoption of older documents for 2026–27. Add subject-level mappings for Social Studies and lower-secondary Science, and broader coverage for Geography and Environmental Studies.
 - Expand astronomy visuals, circuit construction and historical enquiry missions. The current circuit uses configurable templates, and historical characters use scripted questions.
 - Add an optional provider-backed tutor and aggregate misconception reporting if needed for a later release. The current package uses contextual scripted hints and individual teacher feedback.
 - Extend English text extraction for future Maltese translation, browser acceptance automation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority from the original concept brief: polish the Forces and Motion teacher demonstration and develop Medieval Mdina into a richer same-viewpoint portal with source-based comparison of past and present. Preserve the shared outcome, reasoning and evidence workflow across all three modules.
+Next implementation priority from the original concept brief: polish the Forces and Motion teacher demonstration, with a clear prediction, controlled comparison and evidence review. Preserve the shared outcome, reasoning and evidence workflow across all three modules.
