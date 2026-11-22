@@ -2,6 +2,12 @@
 
 **Release status: in development.**
 
+## Space and Earth investigation · 22 November 2026
+
+The globe and result cards now share the same solar geometry. Students can move Malta between the lit and dark sides, switch to an orbital view to examine seasonal position and tilt, and see the illuminated fraction of the Moon change in a separate inset. The day-and-night activity maps to 5.9.1 in the October 2026 Year 5 Primary Science outcomes. Sizes, distances and the lunar orientation are illustrative.
+
+The build and 17 automated tests passed, including day, night, horizon, seasonal daylight and lunar illumination checks. A browser check verified the midnight and new Moon responses, orbital viewpoint, recorded trials, curriculum link and layout at a 390 px viewport.
+
 ## Forces and Motion teacher demonstration · 22 November 2026
 
 The lab now shows the prediction before the controls reveal a two-second result. The smoother and rougher presets change only friction, and the latest comparison names every setting that changed. The classroom demo carries the recorded prediction and trials into educator review and the downloadable investigation report. A fictional example remains available.
@@ -33,9 +39,9 @@ The first working local release includes twelve investigations: five science mod
 
 - Add a richer 3D presentation and accessible interaction layer. Current scenes are illustrated Canvas 2D with scripted animations. Mdina has a three-stop perspective tour and interactive evidence. Continuous camera movement and richer reconstruction detail remain open.
 - Extend curriculum mapping and confirm school adoption of older documents for 2026–27. Add subject-level mappings for Social Studies and lower-secondary Science, and broader coverage for Geography and Environmental Studies.
-- Expand astronomy visuals, circuit construction and historical enquiry missions. The current circuit uses configurable templates, and historical characters use scripted questions.
+- Expand circuit construction and historical enquiry missions. The current circuit uses configurable templates, and historical characters use scripted questions.
 - Add an optional provider-backed tutor and aggregate misconception reporting if needed for a later release. The current package uses contextual scripted hints and individual teacher feedback.
 - Extend English text extraction for future Maltese translation, browser acceptance automation, low-spec device profiling, physical Android/Edge testing, assistive-technology testing and print-layout verification. Saving a PDF in the browser print dialog was not independently tested.
 - Multi-device submission sync requires authenticated storage and school data-protection review. The current working flow uses local browser storage and downloadable files.
 
-Next implementation priority: improve the Space and Earth investigation so its illustrations convey the same day-night and Moon phase relationships as its model. Preserve the shared outcome, reasoning and evidence workflow across all three modules.
+Next implementation priority: expand circuit construction into student-controlled component placement and connectivity. Preserve the shared outcome, reasoning and evidence workflow across all three modules.

@@ -9,6 +9,15 @@
 - 10 minutes. Write an explanation that connects friction and distance. Reflect on an assumption the model makes.
 - Follow-up. Test a new surface using a real toy and agree what to keep the same.
 
+## Space and Earth · 30 minutes
+
+**Intention** — Use a model to explain day and night. Curriculum link: Year 5 Primary Science 5.9.1.
+
+- Set local solar time to noon. Ask pupils to predict where Malta will be relative to the lit half of Earth at midnight.
+- Record noon and midnight while holding the orbital day and tilt fixed. Use both observations to explain the role of Earth’s rotation.
+- For an extension, switch to Earth’s orbit and compare daylight around the June and December solstices. Change the lunar day separately and describe what changes in the Moon inset.
+- Compare the Moon inset with observations or with [NASA’s Moon Phases guide](https://science.nasa.gov/moon/moon-phases/).
+
 ## Roman Malta · 40 minutes
 
 **Intention** — Draw and qualify an inference about a Roman household. Curriculum link: Year 7 History General, HIS 7.4, objective 3, item 9.

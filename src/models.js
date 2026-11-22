@@ -15,6 +15,21 @@ export const sites = [
   ['School', 3.5, 1], ['Hill park', 5, 0]
 ];
 
+export function spaceGeometry({ hour, tilt, orbit, moon }) {
+  const radians = Math.PI / 180;
+  const latitude = 36 * radians;
+  const longitude = 2 * Math.PI * orbit / 365;
+  const declination = Math.asin(Math.sin(tilt * radians) * Math.sin(longitude));
+  const hourAngle = (hour - 12) * Math.PI / 12;
+  const altitude = Math.asin(Math.sin(latitude) * Math.sin(declination) +
+    Math.cos(latitude) * Math.cos(declination) * Math.cos(hourAngle));
+  const lunarAngle = 2 * Math.PI * moon / 29.53;
+  const daylight = 24 * Math.acos(-Math.tan(latitude) * Math.tan(declination)) / Math.PI;
+  const lunarPercent = 50 * (1 - Math.cos(lunarAngle));
+  const sky = Math.abs(altitude / radians) < .02 ? 'Sun on the horizon' : altitude > 0 ? 'Day' : 'Night';
+  return { latitude, longitude, declination, hourAngle, altitude, daylight, lunarAngle, lunarPercent, sky };
+}
+
 export const labs = {
   forces: {
     controls: [['mass','Object mass (kg)',1,10,1,3],['gravity','Gravity (m/s²)',1,20,.1,9.8],['friction','Friction coefficient',0,.8,.05,.15],['push','Down-ramp force (N)',0,40,1,12],['angle','Ramp angle (°)',0,40,1,12]],
@@ -43,14 +58,13 @@ export const labs = {
     run: ({ temperature: t }) => [['Bulk state',t < 0 ? 'Solid' : t === 0 ? 'Ice and liquid' : t < 100 ? 'Liquid' : t === 100 ? 'Liquid and gas' : 'Gas',''],['Absolute temperature',round(t + 273.15),'K']]
   },
   space: {
-    controls: [['hour','Local solar time (hour)',0,24,.25,12],['tilt','Earth tilt (°)',0,35,.5,23.5],['orbit','Days since March equinox',0,365,1,0],['moon','Days since new moon',0,29.53,.1,7.4],['view','Diagram viewpoint',['Side view','Orbital view'],0]],
-    notes: 'Approximate latitude 36° N. Circular orbit and solar time. Symbols, sizes and distances are schematic. Moon phases track illumination geometry, with eclipses omitted.',
-    run: ({ hour, tilt, orbit, moon }) => {
-      const lat = 36 * Math.PI / 180;
-      const declination = Math.asin(Math.sin(tilt * Math.PI / 180) * Math.sin(2 * Math.PI * orbit / 365));
-      const altitude = Math.asin(Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos((hour - 12) * Math.PI / 12));
+    controls: [['hour','Local solar time (hour)',0,24,.25,12],['tilt','Earth tilt (°)',0,35,.5,23.5],['orbit','Days since March equinox',0,365,1,0],['moon','Days since new moon',0,29.53,.1,7.4],['view','Diagram viewpoint',['Day and night','Earth’s orbit'],0]],
+    notes: 'The model uses approximate latitude 36° N, a circular orbit and local solar time. Civil clocks and atmospheric refraction are omitted. Diagrams exaggerate sizes and project distances. The Moon inset shows the lit portion visible from Earth. Its orientation is illustrative and eclipses are omitted.',
+    run: values => {
+      const { altitude, daylight, lunarPercent, sky } = spaceGeometry(values);
       const angle = altitude * 180 / Math.PI;
-      return [['Sun altitude',round(angle),'°'],['Daylight',round(24 / Math.PI * Math.acos(-Math.tan(lat) * Math.tan(declination))),'h'],['Shadow per metre',angle > 0.1 ? round(1 / Math.tan(altitude)) : 'Sun at or below horizon',''],['Moon illuminated',round(50 * (1 - Math.cos(2 * Math.PI * moon / 29.53))),'%']];
+      const shadow = angle > .1 ? round(1 / Math.tan(altitude)) : angle > 0 ? 'Very long near the horizon' : 'No direct Sun';
+      return [['Sun altitude',round(angle),'°'],['Daylight',round(daylight),'h'],['Shadow per metre',shadow,typeof shadow === 'number' ? 'm' : ''],['Visible Moon lit',round(lunarPercent),'%'],['Malta sky',sky,'']];
     }
   },
   ecosystem: {

@@ -1,4 +1,4 @@
-import { sites } from './models.js';
+import { sites, spaceGeometry } from './models.js';
 
 export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, position = 0, active = false) {
   const c = canvas.getContext('2d');
@@ -203,18 +203,68 @@ export function scene(canvas, id, v = {}, results = [], t = 0, historic = true, 
     }
     label('Water particle model',22,28);
   } else if (id==='space') {
-    const globe = c.createRadialGradient(320,135,10,366,147,85);
-    globe.addColorStop(0,'#6bc6e3');globe.addColorStop(1,'#131f40');
-    const y = v.view===1 ? 103 : 154;
-    dot(101,y,49,'#ffcb86');dot(366,151,78,globe);
-    const axis = (v.tilt || 0) * Math.PI / 180;
-    path([[366+Math.sin(axis)*99,151-Math.cos(axis)*99],[366-Math.sin(axis)*99,151+Math.cos(axis)*99]],'#9dc9ed',false);
-    const hour=(v.hour ?? 12)*Math.PI/12;
-    dot(366+Math.sin(hour)*65,141,5,'#ffb991');
-    const lunar = (v.moon || 0) / 29.53 * Math.PI*2;
-    dot(551+50*Math.cos(lunar),v.view===1 ? 150+88*Math.sin(lunar) : 141+18*Math.sin(lunar),16,'#c7cfee');
-    label('Sun',83,y+75);label('Earth',348,270);label('Moon',557,273);
-    label('Schematic sizes and distances',22,28);
+    const { latitude, longitude, declination, hourAngle, lunarAngle, lunarPercent, sky } = spaceGeometry(v);
+    const sun = (x,y,r) => {
+      const glow = c.createRadialGradient(x,y,r*.2,x,y,r*1.6);
+      glow.addColorStop(0,'#fffbdd'); glow.addColorStop(.64,'#ffbd63'); glow.addColorStop(1,'#ffa13700');
+      dot(x,y,r*1.6,glow);
+    };
+    if (v.view === 1) {
+      const cx = 265, cy = 146;
+      c.beginPath(); c.ellipse(cx,cy,160,79,0,0,2*Math.PI); c.strokeStyle='#7fa9db'; c.lineWidth=2; c.stroke();
+      sun(cx,cy,36);
+      const earthX = cx + 160 * Math.sin(longitude), earthY = cy - 79 * Math.cos(longitude);
+      label('March equinox',215,55); label('June solstice',388,115); label('September equinox',206,257); label('December solstice',56,115);
+      dot(earthX,earthY,22,'#60a8d1');
+      const tilt = v.tilt * Math.PI / 180;
+      path([[earthX+36*Math.sin(tilt),earthY+36*Math.cos(tilt)],[earthX-36*Math.sin(tilt),earthY-36*Math.cos(tilt)]],'#e1fbff',false,2);
+      label('Earth’s orbit · perspective view',22,28);
+    } else {
+      const earthX = 315, earthY = 151, radius = 83;
+      const rayX = Math.cos(declination), rayY = Math.sin(declination);
+      const sunX = earthX - 204 * rayX, sunY = earthY - 204 * rayY;
+      sun(sunX,sunY,39);
+      for (const offset of [-44,0,44]) {
+        const from = [sunX+59*rayX-offset*rayY,sunY+59*rayY+offset*rayX];
+        const to = [earthX-96*rayX-offset*rayY,earthY-96*rayY+offset*rayX];
+        path([from,to],'#ffce87',false,1.5);
+      }
+      dot(earthX,earthY,radius,'#232e54');
+      c.save();
+      c.translate(earthX,earthY);
+      c.rotate(declination);
+      const lit = c.createRadialGradient(-52,-24,8,2,0,100);
+      lit.addColorStop(0,'#abf7df'); lit.addColorStop(1,'#34699d');
+      c.beginPath(); c.arc(0,0,radius,Math.PI/2,3*Math.PI/2); c.closePath();
+      c.fillStyle=lit; c.fill();
+      c.restore();
+      path([[earthX,earthY-radius-10],[earthX,earthY+radius+10]],'#91b5dc80');
+      path([[earthX-radius,earthY],[earthX+radius,earthY]],'#b2def074');
+      const maltaX = earthX - radius * Math.cos(latitude) * Math.cos(hourAngle);
+      const maltaY = earthY - radius * Math.sin(latitude);
+      const farSide = Math.sin(hourAngle) < -.001;
+      dot(maltaX,maltaY,6,'#ffd899');
+      if (farSide) dot(maltaX,maltaY,3.8,'#202947');
+      label('Malta',maltaX-16,maltaY-11,'#ffffff');
+      label('Light from the Sun',22,28);
+      label('Malta · '+sky+(farSide ? ' · far side of the globe' : ''),22,275);
+    }
+    box(512,48,184,179,'#131e3bbd');
+    const moonX=604, moonY=135, moonRadius=41;
+    dot(moonX,moonY,moonRadius+1,'#8ba4cf');
+    dot(moonX,moonY,moonRadius,'#2c3658');
+    const side = lunarAngle <= Math.PI ? 1 : -1;
+    const limb = [], terminator = [];
+    for (let i=0;i<=40;i++) {
+      const y = moonRadius * (i/20-1);
+      const halfWidth = Math.sqrt(Math.max(0, moonRadius**2-y**2));
+      limb.push([moonX+side*halfWidth,moonY+y]);
+      terminator.unshift([moonX+side*Math.cos(lunarAngle)*halfWidth,moonY+y]);
+    }
+    path(limb.concat(terminator),'#e8e5ce',true);
+    label('Moon seen from Earth',532,74);
+    label(Math.round(lunarPercent)+'% of visible face lit',534,203);
+    label('Sizes and distances are schematic',460,275);
   } else {
     ['Plants','Rabbits','Insects','Owls'].forEach((name,i)=>{
       const x = 120+i*160,y=i%2 ? 110 : 201, value=Number(results[i]?.[1]) || 0;

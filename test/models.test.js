@@ -64,6 +64,11 @@ test('water phase boundaries and seasonal geometry respond to controls', () => {
   assert.equal(metric('matter','Bulk state',{temperature:100}),'Liquid and gas');
   assert.equal(metric('space','Daylight',{tilt:0}),12);
   assert.ok(metric('space','Daylight',{orbit:91}) > metric('space','Daylight',{orbit:274}));
+  assert.equal(metric('space','Malta sky',{hour:12}),'Day');
+  assert.equal(metric('space','Malta sky',{hour:0}),'Night');
+  assert.equal(metric('space','Malta sky',{hour:6,orbit:0}),'Sun on the horizon');
+  assert.equal(metric('space','Visible Moon lit',{moon:0}),0);
+  assert.equal(metric('space','Visible Moon lit',{moon:29.53/2}),100);
 });
 test('barrier reduces exposure and the model reports cost and clamps water level', () => {
   assert.ok(metric('flood','Exposed buildings / assets',{barrier:1}) < metric('flood','Exposed buildings / assets',{}));

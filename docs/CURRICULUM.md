@@ -7,6 +7,7 @@ Reviewed 22 November 2026. A verified record means that the identifier and meani
 | Primary Year 5 Science | 5.1.3, October 2026, p. 1 | Forces and Motion and States of Matter. Assess the prior scientific prediction and its reason. The physics content is enrichment. |
 | Primary Year 5 Science | 5.5.2, October 2026, p. 5 | Electricity. Use observed bulb power and light as examples of energy transformation. The lesson addresses the bulb example within a wider outcome. |
 | Primary Year 5 Science | 5.7.4, October 2026, p. 7 | Ecosystem Explorer. Use habitat-loss comparisons to reason about impacts on organisms. |
+| Primary Year 5 Science | 5.9.1, October 2026, p. 9 | Space and Earth. Use the globe to show why Malta moves between day and night. Seasonal comparisons and Moon phases extend the lesson. |
 | Secondary Year 7 History General | HIS 7.4, teaching objective 3, item 9, PDF p. 24 | Roman Malta. Support an inference from the Domvs Romana and compare it with another source. |
 | Secondary Year 8 History General | HIS 8.3, teaching objective 3, item 4, D7.6 and D7.7, PDF p. 19 | Medieval Mdina. Reconstruct a plausible day and identify uncertainties. |
 | Secondary Year 8 History General | HIS 8.5, teaching objective 3, item 2, A7.5 and A7.8, PDF p. 26 | Malta Under the Knights. Use the source dossier to sequence key events and discuss consequences. |
@@ -25,6 +26,6 @@ Reviewed 22 November 2026. A verified record means that the identifier and meani
 - [Year 9–11 subject syllabi](https://curriculum.gov.mt/syllabi-years-9-10-11-new/)
 - [Malta's Preliminary Flood Risk Assessment, 2013](https://www.energywateragency.gov.mt/wp-content/uploads/2017/12/Preliminary-Flood-Risk-Assessment-Final-Report.pdf)
 
-Space and Earth, Water Management, Sustainable Energy and Sustainable Urban Planning use proposed objectives. Social Studies, secondary Science and broader environmental education need further outcome-level review. The portal links above are starting points for that review.
+Water Management, Sustainable Energy and Sustainable Urban Planning use proposed objectives. Social Studies, secondary Science and broader environmental education need further outcome-level review. The portal links above are starting points for that review.
 
 Historical objects and claims link to dossiers and Heritage Malta records through each activity. Illustrated scenes, characters and conversations are educational reconstructions.
